@@ -39,4 +39,11 @@ public class Period {
 	public void setVacation(boolean isVacation) {
 		this.isVacation = isVacation;
 	}
+	
+	public Period(int id, LocalDate start, LocalDate end, boolean Vacation) {
+		setEndDate(end);
+		setPeriodId(id);
+		setStartDate(start);
+		setVacation(Vacation);
+	}
 }

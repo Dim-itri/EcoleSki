@@ -49,4 +49,8 @@ public class Instructor extends Person{
 	public void addAccreditation(Accreditation newAcc) {
 		accreditations.add(newAcc);
 	}
+	
+	public void deleteAccreditation(Accreditation acc) {
+		accreditations.remove(acc);
+	}
 }
