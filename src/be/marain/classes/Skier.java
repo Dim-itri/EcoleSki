@@ -1,7 +1,11 @@
 package be.marain.classes;
 
+import java.security.Identity;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+
+import be.marain.dao.SkierDAO;
 
 public class Skier extends Person{
 	public Skier(int id, String name, String surname, LocalDate dob, int phone) {
@@ -13,19 +17,24 @@ public class Skier extends Person{
 		super(name, surname, dob, phone);
 	}
 	
-	public static List<Skier> getAllSkiers(){
-		//A faire
+	public static List<Skier> getAllSkiers(SkierDAO dao){
+		return dao.findAll();
 	}
 	
 	public static Skier getSkier(int id) {
-		//A faire
+		return null;
 	}
 	
 	public boolean updateSkier() {
-		//A faire
+		return false;
 	}
 	
 	public boolean deleteSkier() {
-		//A faire
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "id : " + getPersonId() + " Name : " + getName() + " Surname : " + getSurname() + " DOB : " + getDateOfBirth() + " Phone : " + getPhoneNumber();
 	}
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EcoleSkiConnection {
-	private static Connection instance = null;
+	protected static Connection instance = null;
 	
 	private EcoleSkiConnection() {
 		 try {

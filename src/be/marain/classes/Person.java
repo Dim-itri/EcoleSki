@@ -1,5 +1,6 @@
 package be.marain.classes;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 public abstract class Person {
