@@ -1,7 +1,7 @@
 package be.marain.classes;
 
-import java.sql.Date;
 import java.time.LocalDate;
+import java.util.regex.Pattern;
 
 public abstract class Person {
 	private int personId;
@@ -9,7 +9,11 @@ public abstract class Person {
 	private String surname;
 	private LocalDate dateOfBirth;
 	private int phoneNumber;
+	private final String nameRegEx = "^[A-ZÀ-Ÿ][a-zà-ÿ]+(?:[-\\s][A-ZÀ-Ÿ][a-zà-ÿ]+)*$";
+	private final String dobRegEx = "^(19[0-9]{2}|20[0-9]{2})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
+	private final String phoneRegEx = "^(\\+\\d{1,3})?\\s?(\\(?\\d{1,4}\\)?)?[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}$";
 
+	
 	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
 	}
@@ -30,36 +34,55 @@ public abstract class Person {
 		return surname;
 	}
 
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
+	public void setDateOfBirth(LocalDate dateOfBirth) throws IllegalArgumentException{
+		if(Pattern.matches(dobRegEx, dateOfBirth.toString())) {
+			this.dateOfBirth = dateOfBirth;
+		}else {
+			throw new IllegalArgumentException("Erreur dans la date de naissance : " + dateOfBirth.toString());
+		}
 	}
 
 	public void setPersonId(int personId) {
 		this.personId = personId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String name) throws IllegalArgumentException{		
+		if(Pattern.matches(nameRegEx, name)) {
+			this.name = name;
+		}else {
+			throw new IllegalArgumentException("Erreur dans le prénom : " + name);
+		}
 	}
 
-	public void setPhoneNumber(int phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setPhoneNumber(int phoneNumber) throws IllegalArgumentException{
+		if(Pattern.matches(phoneRegEx, String.valueOf(phoneNumber))) {
+			this.phoneNumber = phoneNumber;
+		}else {
+			throw new IllegalArgumentException("Erreur dans le numéro de téléphone : " + phoneNumber);
+		}
 	}
 
-	public void setSurname(String surname) {
-		this.surname = surname;
+	public void setSurname(String surname) throws IllegalArgumentException {
+		
+		
+		if(Pattern.matches(nameRegEx, surname)) {
+			this.surname = surname;
+		}else {
+			throw new IllegalArgumentException("Erreur dans le nom : " + surname);
+		}
+		
 	}
 
 	public Person(int id, String name, String surname, LocalDate dob, int phone) {
 		this(name, surname, dob, phone);
-		setPersonId(id);
+		this.personId = id;
 	}
 
 	public Person(String name, String surname, LocalDate dob, int phone) {
 		personId = 0;
 		setName(name);
 		setSurname(surname);
-		setDateOfBirth(dob);
 		setPhoneNumber(phone);
+		setDateOfBirth(dob);
 	}
 }

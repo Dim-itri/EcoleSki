@@ -3,6 +3,7 @@ package be.marain.jframes;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
@@ -18,13 +19,13 @@ import be.marain.tableModels.SkierTableModel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.io.ObjectInputFilter.Status;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
@@ -160,29 +161,41 @@ public class DisplaySkiers extends JFrame {
 		//User creation
 		JButton btnCreateSkier = new JButton("Créer");
 		btnCreateSkier.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				skierSurname = surnameTF.getText();
-				skierName = nameTF.getText();
-				skierPhone = Integer.parseInt(phoneTF.getText());
-				skierDob =  dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-				
-				if(!Pattern.matches(nameRegEx, skierSurname)) {
-					surnameELabel.setText("Entrez un nom valide (>5 caractères).");
-				}else if(!Pattern.matches(nameRegEx, skierName)) {
-					nameELabel.setText("Entrez un prénom valide");
-				}else if(!Pattern.matches(phoneRegEx, phoneTF.getText())) {
-					phoneELabel.setText("Entrez un numéro de téléphone valide.");
-				}else if(!Pattern.matches(dobRegEx, skierDob.toString())){
-					dobELabel.setText("Entrez une date valide");
-				}else {
+			public void actionPerformed(ActionEvent e) {	
+				try {
+					skierSurname = surnameTF.getText();
+					skierName = nameTF.getText();
+					skierPhone = Integer.parseInt(phoneTF.getText());
+					skierDob =  dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					Skier newSkier = new Skier(skierName, skierSurname, skierDob, skierPhone);
-					//newSkier.createSkier(skierDao);
-					model.addSkier(newSkier);
+					
+					if(newSkier.createSkier(skierDao)) {
+						model.addSkier(newSkier);
+						JOptionPane.showMessageDialog(null, "Skieur créé !");
+					}
+				}catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Le numéro de téléphone ne doit contenir que des nombres");
+				}
+				catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
 				}
 			}
 		});
 		
 		btnCreateSkier.setBounds(88, 393, 85, 21);
 		tablePanel.add(btnCreateSkier);
+		
+		JButton btnHome = new JButton("Accueil");
+		btnHome.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Index index = new Index();
+				dispose();
+				index.setVisible(true);
+			}
+		});
+		btnHome.setBounds(10, 696, 89, 23);
+		tablePanel.add(btnHome);
 	}
 }

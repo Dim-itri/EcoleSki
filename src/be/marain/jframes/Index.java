@@ -57,7 +57,7 @@ public class Index extends JFrame {
 		displaySkiers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DisplaySkiers skiersJFrame = new DisplaySkiers();
-				setVisible(false);
+				dispose();
 				skiersJFrame.setVisible(true);
 			}
 		});
