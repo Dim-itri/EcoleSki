@@ -46,12 +46,12 @@ public class Index extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		setTitle("Accueil");
-		
+
 		JLabel title = new JLabel("Ecole de ski");
 		title.setFont(new Font("Tahoma", Font.BOLD, 23));
 		title.setBounds(604, 11, 197, 27);
 		contentPane.add(title);
-		
+
 		JButton displaySkiers = new JButton("Skieurs");
 		displaySkiers.setFont(new Font("Tahoma", Font.BOLD, 17));
 		displaySkiers.addActionListener(new ActionListener() {
@@ -61,30 +61,30 @@ public class Index extends JFrame {
 				skiersJFrame.setVisible(true);
 			}
 		});
-		
+
 		displaySkiers.setBounds(66, 310, 155, 49);
 		contentPane.add(displaySkiers);
-		
+
 		JButton displayInstructors = new JButton("Instructeurs");
 		displayInstructors.setFont(new Font("Tahoma", Font.BOLD, 17));
 		displayInstructors.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		
+
 		displayInstructors.setBounds(451, 310, 148, 49);
 		contentPane.add(displayInstructors);
-		
+
 		JButton btnNewButton = new JButton("Leçons");
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 17));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		
+
 		btnNewButton.setBounds(808, 310, 125, 49);
 		contentPane.add(btnNewButton);
-		
+
 		JButton displayBookings = new JButton("Réservations");
 		displayBookings.setFont(new Font("Tahoma", Font.BOLD, 17));
 		displayBookings.setBounds(1084, 313, 155, 49);
