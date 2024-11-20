@@ -1,7 +1,10 @@
 package be.marain.classes;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+
+import be.marain.dao.InstructorDAO;
 
 public class Instructor extends Person {
 	private List<Accreditation> accreditations;
@@ -13,37 +16,48 @@ public class Instructor extends Person {
 
 	public Instructor(String name, String surname, LocalDate dob, int phone, Accreditation accreditation) {
 		super(name, surname, dob, phone);
+		accreditations = new ArrayList<Accreditation>();
 		if (accreditation != null) {
 			accreditations.add(accreditation);
 		}
 	}
-
+	
+	public String getInstructorAccreditationString() {
+		if (accreditations.isEmpty()) {
+	        return "Aucune";
+	    }
+	    return accreditations.stream()
+	                         .map(Accreditation::getName)
+	                         .reduce((a, b) -> a + ", " + b)
+	                         .orElse("Aucune");
+	}
+	
 	public List<Accreditation> getInstructorAccreditations() {
 		return accreditations;
 	}
 
 	public boolean isAccreditate() {
-		// A faire
+		return false;
 	}
 
-	public static List<Instructor> getAllInstructors() {
-		// A faire
+	public static List<Instructor> getAllInstructors(InstructorDAO dao) {
+		return dao.findAll();
 	}
 
 	public static Instructor getInstructor(int id) {
-		// A faire
+		return null;
 	}
 
 	public boolean createInstructor() {
-		// A faire
+		return false;
 	}
 
 	public boolean deleteInstructor() {
-		// a faire
+		return false;
 	}
 
 	public boolean updateInstructor() {
-		// A faire
+		return false;
 	}
 
 	public void addAccreditation(Accreditation newAcc) {

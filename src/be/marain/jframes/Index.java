@@ -1,13 +1,11 @@
 package be.marain.jframes;
 
 import java.awt.EventQueue;
-import java.awt.Label;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JTabbedPane;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -56,7 +54,7 @@ public class Index extends JFrame {
 		displaySkiers.setFont(new Font("Tahoma", Font.BOLD, 17));
 		displaySkiers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DisplaySkiers skiersJFrame = new DisplaySkiers();
+				SkiersJFrame skiersJFrame = new SkiersJFrame();
 				dispose();
 				skiersJFrame.setVisible(true);
 			}
@@ -69,6 +67,9 @@ public class Index extends JFrame {
 		displayInstructors.setFont(new Font("Tahoma", Font.BOLD, 17));
 		displayInstructors.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				InstructorsJFrame instructorsJFrame = new InstructorsJFrame();
+				dispose();
+				instructorsJFrame.setVisible(true);
 			}
 		});
 

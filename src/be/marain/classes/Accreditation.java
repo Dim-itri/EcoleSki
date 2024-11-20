@@ -28,6 +28,6 @@ public class Accreditation {
 	}
 
 	public static List<Accreditation> getAllAccreditations() {
-		// A faire
+		return null;
 	}
 }

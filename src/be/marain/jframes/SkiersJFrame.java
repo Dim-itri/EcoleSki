@@ -1,11 +1,8 @@
 package be.marain.jframes;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -31,7 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
 
-public class DisplaySkiers extends JFrame {
+public class SkiersJFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -54,7 +51,7 @@ public class DisplaySkiers extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					DisplaySkiers frame = new DisplaySkiers();
+					SkiersJFrame frame = new SkiersJFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -75,7 +72,7 @@ public class DisplaySkiers extends JFrame {
 	/**
 	 * Create the frame.
 	 */	
-	public DisplaySkiers() {
+	public SkiersJFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1317, 786);
 		contentPane = new JPanel();

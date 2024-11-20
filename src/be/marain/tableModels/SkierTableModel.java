@@ -7,7 +7,8 @@ import javax.swing.table.AbstractTableModel;
 import be.marain.classes.Skier;
 
 public class SkierTableModel extends AbstractTableModel {
-	private String[] columnsName = { "ID", "Prénom", "Nom", "Date de naissance", "Téléphone" };
+	static final long serialVersionUID = 1L;
+	private final String[] columnsName = { "ID", "Prénom", "Nom", "Date de naissance", "Téléphone" };
 	private List<Skier> skiers;
 
 	public SkierTableModel(List<Skier> skiers) {
