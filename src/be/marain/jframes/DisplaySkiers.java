@@ -62,7 +62,16 @@ public class DisplaySkiers extends JFrame {
 			}
 		});
 	}
-
+	
+	public void resetSelectedSkier() {
+		surnameTF.setText("");
+		nameTF.setText("");
+		phoneTF.setText("");
+		dobChooser.setDate(null);
+		
+		selectedRow = -1;
+		selectedSkier = null;
+	}
 	/**
 	 * Create the frame.
 	 */	
@@ -101,8 +110,6 @@ public class DisplaySkiers extends JFrame {
 						selectedRow = table.getSelectedRow();
 						
 						selectedSkier = model.getSkierAt(selectedRow);
-						
-						JOptionPane.showMessageDialog(null, "User : " + selectedSkier.toString());
 						
 						surnameTF.setText(selectedSkier.getSurname());
 						nameTF.setText(selectedSkier.getName());
@@ -184,6 +191,8 @@ public class DisplaySkiers extends JFrame {
 					skierDob =  dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					Skier newSkier = new Skier(skierName, skierSurname, skierDob, skierPhone);
 					
+					resetSelectedSkier();
+					
 					if(newSkier.createSkier(skierDao)) {
 						model.addSkier(newSkier);
 						JOptionPane.showMessageDialog(null, "Skieur créé !");
@@ -209,8 +218,7 @@ public class DisplaySkiers extends JFrame {
 				try {
 					if(selectedSkier.deleteSkier(skierDao)) {
 						model.deleteSkier(selectedRow);
-						selectedRow = -1;
-						selectedSkier = null;
+						resetSelectedSkier();
 						JOptionPane.showMessageDialog(null, "Skieur supprimé !");
 					}
 				}catch(NullPointerException ex) {
@@ -245,6 +253,8 @@ public class DisplaySkiers extends JFrame {
 						model.updateSkier(selectedRow, selectedSkier);
 						JOptionPane.showMessageDialog(null, "Skieur modifié !");
 					}
+					
+					resetSelectedSkier();
 				}catch(NullPointerException ex){
 					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un skieur.");
 				}catch (IndexOutOfBoundsException e2) {
