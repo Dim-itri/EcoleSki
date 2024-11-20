@@ -28,8 +28,8 @@ public class Skier extends Person {
 		return null;
 	}
 
-	public boolean updateSkier() {
-		return false;
+	public boolean updateSkier(SkierDAO dao) {
+		return dao.update(this);
 	}
 
 	public boolean deleteSkier(SkierDAO dao) {

@@ -68,7 +68,24 @@ public class SkierDAO extends DAO<Skier> {
 
 	@Override
 	public boolean update(Skier skier) {
-		return false;
+		boolean success;
+		
+		try {
+			PreparedStatement statement = connect.prepareStatement("UPDATE skier SET name=?, surname=?, dateofbirth=?, phonenumber=? WHERE skierid=?");
+			
+			statement.setString(1, skier.getName());
+			statement.setString(2, skier.getSurname());
+			statement.setDate(3, java.sql.Date.valueOf(skier.getDateOfBirth()));
+			statement.setInt(4, skier.getPhoneNumber());
+			statement.setInt(5, skier.getPersonId());
+			
+			success = statement.executeUpdate() >= 1;		
+		}catch(SQLException e) {
+			success = false;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		return success;
 	}
 
 	@Override

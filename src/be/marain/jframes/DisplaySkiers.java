@@ -102,6 +102,8 @@ public class DisplaySkiers extends JFrame {
 						
 						selectedSkier = model.getSkierAt(selectedRow);
 						
+						JOptionPane.showMessageDialog(null, "User : " + selectedSkier.toString());
+						
 						surnameTF.setText(selectedSkier.getSurname());
 						nameTF.setText(selectedSkier.getName());
 						phoneTF.setText(String.valueOf(selectedSkier.getPhoneNumber()));
@@ -223,6 +225,37 @@ public class DisplaySkiers extends JFrame {
 		
 		btnDelete.setBounds(232, 392, 127, 23);
 		tablePanel.add(btnDelete);
+		
+		//Update skier
+		JButton btnUpdate = new JButton("Modifier");
+		btnUpdate.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				try {
+					skierSurname = surnameTF.getText();
+					skierName = nameTF.getText();
+					skierPhone = Integer.parseInt(phoneTF.getText());
+					skierDob =  dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					
+					selectedSkier.setName(skierName);
+					selectedSkier.setSurname(skierSurname);
+					selectedSkier.setDateOfBirth(skierDob);
+					selectedSkier.setPhoneNumber(skierPhone);
+					
+					if(selectedSkier.updateSkier(skierDao)) {
+						model.updateSkier(selectedRow, selectedSkier);
+						JOptionPane.showMessageDialog(null, "Skieur modifié !");
+					}
+				}catch(NullPointerException ex){
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un skieur.");
+				}catch (IndexOutOfBoundsException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+		btnUpdate.setBounds(369, 392, 127, 23);
+		tablePanel.add(btnUpdate);
 		
 		JButton btnHome = new JButton("Accueil");
 		btnHome.addActionListener(new ActionListener() {

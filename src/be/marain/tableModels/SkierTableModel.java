@@ -56,12 +56,21 @@ public class SkierTableModel extends AbstractTableModel {
 		fireTableRowsInserted(skiers.size() - 1, skiers.size() - 1);
 	}
 	
-	public void deleteSkier(int rowIndex) {
+	public void deleteSkier(int rowIndex) throws IndexOutOfBoundsException{
 		if(rowIndex >= 0 && rowIndex < skiers.size()) {
 			skiers.remove(rowIndex);
 			fireTableRowsDeleted(rowIndex, rowIndex);
 		}else {
 			throw new IndexOutOfBoundsException("Impossible de supprimer le skieur à l'index : " + rowIndex);
+		}
+	}
+	
+	public void updateSkier(int rowIndex, Skier updatedSkier) {
+		if(rowIndex >= 0 && rowIndex < skiers.size()) {
+			skiers.set(rowIndex, updatedSkier);
+			fireTableRowsUpdated(rowIndex, rowIndex);
+		}else {
+			throw new IndexOutOfBoundsException("Impossible de modifier le skieur " + rowIndex);
 		}
 	}
 	
