@@ -51,7 +51,19 @@ public class SkierDAO extends DAO<Skier> {
 
 	@Override
 	public boolean delete(Skier skier) {
-		return false;
+		boolean success;
+		
+		try {
+			PreparedStatement statement = connect.prepareStatement("DELETE FROM skier where skierid = ?");
+			statement.setInt(1, skier.getPersonId());
+			
+			success = statement.executeUpdate() >= 1;
+		}catch (SQLException e) {
+			success = false;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		return success;
 	}
 
 	@Override
