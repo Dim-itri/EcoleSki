@@ -2,6 +2,7 @@ package be.marain.jframes;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
@@ -42,6 +43,9 @@ public class DisplaySkiers extends JFrame {
 	private String skierSurname;
 	private LocalDate skierDob;
 	private int skierPhone;
+	private Skier selectedSkier;
+	private int selectedRow;
+	JDateChooser dobChooser;
 
 	/**
 	 * Launch the application.
@@ -63,11 +67,6 @@ public class DisplaySkiers extends JFrame {
 	 * Create the frame.
 	 */	
 	public DisplaySkiers() {
-		boolean success = false;
-		String nameRegEx = "^[A-ZÀ-Ÿ][a-zà-ÿ]+(?:[-\\s][A-ZÀ-Ÿ][a-zà-ÿ]+)*$";
-		String phoneRegEx = "^(\\+\\d{1,3})?\\s?(\\(?\\d{1,4}\\)?)?[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}$";
-		String dobRegEx = "^(19[0-9]{2}|20[0-9]{2})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
- 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1317, 786);
 		contentPane = new JPanel();
@@ -95,6 +94,20 @@ public class DisplaySkiers extends JFrame {
 
 		tablePanel.add(scrollPane);
 		contentPane.add(tablePanel);
+		
+		//Handling click on a row from the table
+				table.getSelectionModel().addListSelectionListener(event -> {
+					if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+						selectedRow = table.getSelectedRow();
+						
+						selectedSkier = model.getSkierAt(selectedRow);
+						
+						surnameTF.setText(selectedSkier.getSurname());
+						nameTF.setText(selectedSkier.getName());
+						phoneTF.setText(String.valueOf(selectedSkier.getPhoneNumber()));
+						dobChooser.setDate(Date.from(selectedSkier.getDateOfBirth().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+					}
+				});
 		
 		JLabel surnameLabel = new JLabel("Nom");
 		surnameLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -154,7 +167,7 @@ public class DisplaySkiers extends JFrame {
 		tablePanel.add(phoneTF);
 		phoneTF.setColumns(10);
 		
-		JDateChooser dobChooser = new JDateChooser();
+		dobChooser = new JDateChooser();
 		dobChooser.setBounds(261, 236, 133, 19);
 		tablePanel.add(dobChooser);
 		
@@ -184,8 +197,32 @@ public class DisplaySkiers extends JFrame {
 			}
 		});
 		
-		btnCreateSkier.setBounds(88, 393, 85, 21);
+		btnCreateSkier.setBounds(88, 393, 127, 21);
 		tablePanel.add(btnCreateSkier);
+		
+		//User deletion	
+		JButton btnDelete = new JButton("Supprimer");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(selectedSkier.deleteSkier(skierDao)) {
+						model.deleteSkier(selectedRow);
+						selectedRow = -1;
+						selectedSkier = null;
+						JOptionPane.showMessageDialog(null, "Skieur supprimé !");
+					}
+				}catch(NullPointerException ex) {
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un skieur");
+				}catch (IndexOutOfBoundsException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+		
+		btnDelete.setBounds(232, 392, 127, 23);
+		tablePanel.add(btnDelete);
 		
 		JButton btnHome = new JButton("Accueil");
 		btnHome.addActionListener(new ActionListener() {

@@ -32,8 +32,8 @@ public class Skier extends Person {
 		return false;
 	}
 
-	public boolean deleteSkier() {
-		return false;
+	public boolean deleteSkier(SkierDAO dao) {
+		return dao.delete(this);
 	}
 
 	@Override
