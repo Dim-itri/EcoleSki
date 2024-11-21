@@ -41,6 +41,8 @@ public class SkierDAO extends DAO<Skier> {
 					newSkier.setPersonId(generatedId);
 				}
 			}
+			
+			statement.close();
 		}catch(SQLException ex) {
 			success = false;
 			JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -58,6 +60,8 @@ public class SkierDAO extends DAO<Skier> {
 			statement.setInt(1, skier.getPersonId());
 			
 			success = statement.executeUpdate() >= 1;
+			
+			statement.close();
 		}catch (SQLException e) {
 			success = false;
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -79,7 +83,9 @@ public class SkierDAO extends DAO<Skier> {
 			statement.setInt(4, skier.getPhoneNumber());
 			statement.setInt(5, skier.getPersonId());
 			
-			success = statement.executeUpdate() >= 1;		
+			success = statement.executeUpdate() >= 1;	
+			
+			statement.close();
 		}catch(SQLException e) {
 			success = false;
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -108,6 +114,8 @@ public class SkierDAO extends DAO<Skier> {
 						resultSet.getInt("phoneNumber"));
 				skiers.add(currSkier);
 			}
+			
+			resultSet.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

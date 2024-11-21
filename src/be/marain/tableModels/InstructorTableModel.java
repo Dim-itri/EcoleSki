@@ -3,7 +3,6 @@ package be.marain.tableModels;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 import be.marain.classes.Instructor;
@@ -16,10 +15,8 @@ public class InstructorTableModel extends AbstractTableModel{
 	public InstructorTableModel(List<Instructor> instructorList) {
 		 if (instructorList == null) {
 	            this.instructors = new ArrayList<>();
-	            System.out.println("Instructor list is null. Initializing with an empty list.");
 	        } else {
 	            this.instructors = instructorList;
-	            System.out.println("Instructor list received with size: " + instructors.size());
 	        }
 	}
 	
@@ -59,5 +56,13 @@ public class InstructorTableModel extends AbstractTableModel{
 			return null;
 		}
 	}
-
+	
+	public void addInstructor(Instructor newInstructor) {
+		if(newInstructor != null) {
+			instructors.add(newInstructor);
+			fireTableRowsInserted(instructors.size()-1, instructors.size()-1);
+		}else {
+			throw new NullPointerException("Aucun Instructeur à créer");
+		}
+	}
 }

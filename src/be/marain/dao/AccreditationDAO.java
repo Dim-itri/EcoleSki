@@ -1,6 +1,10 @@
 package be.marain.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import be.marain.classes.Accreditation;
@@ -36,7 +40,23 @@ public class AccreditationDAO extends DAO<Accreditation> {
 
 	@Override
 	public List<Accreditation> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Accreditation> accreditations = new ArrayList<Accreditation>();
+		
+		try {
+			String query = "SELECT * FROM accreditation";
+			PreparedStatement statement = connect.prepareStatement(query);
+			ResultSet res = statement.executeQuery();
+			
+			while(res.next()) {
+				Accreditation currAcc = new Accreditation(res.getInt("accreditationid"), res.getString("Name"));
+				accreditations.add(currAcc);
+			}
+			
+			statement.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return accreditations;
 	}
 }

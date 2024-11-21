@@ -48,8 +48,8 @@ public class Instructor extends Person {
 		return null;
 	}
 
-	public boolean createInstructor() {
-		return false;
+	public boolean createInstructor(InstructorDAO dao) {
+		return dao.create(this);
 	}
 
 	public boolean deleteInstructor() {
@@ -60,8 +60,12 @@ public class Instructor extends Person {
 		return false;
 	}
 
-	public void addAccreditation(Accreditation newAcc) {
-		accreditations.add(newAcc);
+	public void addAccreditation(Accreditation newAcc) throws NullPointerException{
+		if(newAcc != null) {
+			accreditations.add(newAcc);
+		}else {
+			throw new NullPointerException("Aucune accréditation à ajouter");
+		}
 	}
 
 	public void deleteAccreditation(Accreditation acc) {

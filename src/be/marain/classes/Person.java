@@ -63,14 +63,11 @@ public abstract class Person {
 	}
 
 	public void setSurname(String surname) throws IllegalArgumentException {
-		
-		
 		if(Pattern.matches(nameRegEx, surname)) {
 			this.surname = surname;
 		}else {
 			throw new IllegalArgumentException("Erreur dans le nom : " + surname);
 		}
-		
 	}
 
 	public Person(int id, String name, String surname, LocalDate dob, int phone) {

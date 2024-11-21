@@ -2,6 +2,8 @@ package be.marain.classes;
 
 import java.util.List;
 
+import be.marain.dao.AccreditationDAO;
+
 public class Accreditation {
 	private int accreditationId;
 	private String name;
@@ -27,7 +29,12 @@ public class Accreditation {
 		setName(name);
 	}
 
-	public static List<Accreditation> getAllAccreditations() {
-		return null;
+	public static List<Accreditation> getAllAccreditations(AccreditationDAO dao) {
+		return dao.findAll();
+	}
+	
+	@Override
+	public String toString() {
+		return accreditationId + " - " + name;
 	}
 }

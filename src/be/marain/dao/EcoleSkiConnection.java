@@ -18,7 +18,6 @@ public class EcoleSkiConnection {
 			String password = "KiloWattHeure23";
 			System.setProperty("oracle.jdbc.Trace", "true"); // Activation des traces JDBC pour debug
 			instance = DriverManager.getConnection(url, user, password);
-			System.out.println("Connexion réussie !");
 		} catch (ClassNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (SQLException e) {
@@ -28,7 +27,6 @@ public class EcoleSkiConnection {
 		}
 
 		if (instance == null) {
-			System.out.println("Instance nulle");
 			System.exit(0);
 		}
 	}

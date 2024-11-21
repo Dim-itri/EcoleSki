@@ -1,5 +1,6 @@
 package be.marain.dao;
 
+import java.lang.invoke.CallSite;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,8 +9,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.toedter.calendar.IDateEditor;
+
 import be.marain.classes.Accreditation;
+import be.marain.classes.Booking;
 import be.marain.classes.Instructor;
+import be.marain.classes.Lesson;
 
 public class InstructorDAO extends DAO<Instructor> {
 	public InstructorDAO(Connection conn) {
@@ -18,8 +23,58 @@ public class InstructorDAO extends DAO<Instructor> {
 
 	@Override
 	public boolean create(Instructor newInstructor) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean success = true;
+		
+		try {
+			String[] returnCols = {"instructorid"}; 
+			String query = "Insert into instructor (name, surname, phonenumber, dateofbirth)"
+					+ "VALUES (?, ?, ?, ?)";
+			
+			PreparedStatement statement = connect.prepareStatement(query, returnCols);
+			
+			statement.setString(1, newInstructor.getName());
+			statement.setString(2, newInstructor.getSurname());
+			statement.setInt(3, newInstructor.getPhoneNumber());
+			statement.setDate(4, java.sql.Date.valueOf(newInstructor.getDateOfBirth()));
+			
+			success = statement.executeUpdate() > 0;
+			
+			if (success) {
+				ResultSet generatedKeys = statement.getGeneratedKeys();
+				
+				if(generatedKeys.next()) {
+					int generatedId = generatedKeys.getInt(1);
+					newInstructor.setPersonId(generatedId);
+				}
+			}
+			
+			//Creating the link accreditation-Instructor in DB
+			StringBuilder queryBuilder = new StringBuilder(
+					"INSERT INTO instructoraccred (instructorid, accreditationid) VALUES ");
+			List<Accreditation> accreditations = newInstructor.getInstructorAccreditations();
+			for(int i=0;i<accreditations.size();i++) {
+				queryBuilder.append("(?, ?)");
+				if(i<accreditations.size()-1) {
+					queryBuilder.append(", ");
+				}
+			}
+			
+			statement = connect.prepareStatement(queryBuilder.toString());
+			
+			int paramIndex = 1;
+			
+			for(Accreditation currAccred:accreditations) {
+				statement.setInt(paramIndex++, newInstructor.getPersonId());
+				statement.setInt(paramIndex++, currAccred.getAccreditationId());
+			}
+			
+			success = statement.executeUpdate() > 0;
+			statement.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return success;
 	}
 
 	@Override
@@ -56,7 +111,8 @@ public class InstructorDAO extends DAO<Instructor> {
 				LocalDate currDobDate = resultSet.getDate("dateofbirth").toLocalDate();
 				int currPhoneNumber = resultSet.getInt("phonenumber");
 				List<Accreditation> currAccreds = new ArrayList<Accreditation>();
-						
+				
+				//Getting accreditations
 				PreparedStatement statement = connect.prepareStatement
 								("SELECT * FROM accreditation a "
 								+ "INNER JOIN InstructorAccred ia ON ia.accreditationid = a.accreditationid "
@@ -84,8 +140,6 @@ public class InstructorDAO extends DAO<Instructor> {
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
 		
 		return instructors;
 	}

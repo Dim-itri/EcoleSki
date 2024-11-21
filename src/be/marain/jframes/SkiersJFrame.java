@@ -42,7 +42,7 @@ public class SkiersJFrame extends JFrame {
 	private int skierPhone;
 	private Skier selectedSkier;
 	private int selectedRow;
-	JDateChooser dobChooser;
+	private JDateChooser dobChooser;
 
 	/**
 	 * Launch the application.
@@ -188,12 +188,12 @@ public class SkiersJFrame extends JFrame {
 					skierDob =  dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					Skier newSkier = new Skier(skierName, skierSurname, skierDob, skierPhone);
 					
-					resetSelectedSkier();
-					
 					if(newSkier.createSkier(skierDao)) {
 						model.addSkier(newSkier);
 						JOptionPane.showMessageDialog(null, "Skieur créé !");
 					}
+					
+					resetSelectedSkier();
 				}catch (NumberFormatException ex) {
 					JOptionPane.showMessageDialog(null, "Le numéro de téléphone ne doit contenir que des nombres");
 				}
