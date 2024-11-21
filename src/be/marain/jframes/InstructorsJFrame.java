@@ -2,6 +2,7 @@ package be.marain.jframes;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -38,6 +39,8 @@ public class InstructorsJFrame extends JFrame {
 	private JTextField tfPhone;
 	private JDateChooser dobChooser;
 	private List<Accreditation> selectedAccreditations;
+	private int selectedRow;
+	private Instructor selectedInstructor;
 
 	/**
 	 * Launch the application.
@@ -61,6 +64,8 @@ public class InstructorsJFrame extends JFrame {
 		tfSurname.setText("");
 		dobChooser.setDate(null);
 		selectedAccreditations = new ArrayList<Accreditation>();
+		selectedRow = -1;
+		selectedInstructor = null;
 	}
 	/**
 	 * Create the frame.
@@ -94,6 +99,21 @@ public class InstructorsJFrame extends JFrame {
 
 		tablePanel.add(scrollPane);
 		contentPane.add(tablePanel);
+		
+		//Handling Click
+		table.getSelectionModel().addListSelectionListener(event -> {
+			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+				selectedRow = table.getSelectedRow();
+				
+				selectedInstructor = model.getInstructorAt(selectedRow);
+				
+				tfSurname.setText(selectedInstructor.getSurname());
+				tfName.setText(selectedInstructor.getName());
+				tfPhone.setText(String.valueOf(selectedInstructor.getPhoneNumber()));
+				dobChooser.setDate(Date.from(selectedInstructor.getDateOfBirth().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			}
+		});
+		
 		
 		//Instructor Creation
 		
@@ -178,7 +198,7 @@ public class InstructorsJFrame extends JFrame {
 				}
 			}
 		});
-		btnCreation.setBounds(102, 528, 89, 23);
+		btnCreation.setBounds(102, 529, 89, 23);
 		tablePanel.add(btnCreation);
 		
 		JComboBox<Accreditation> accredCB = new JComboBox<>();
@@ -204,5 +224,27 @@ public class InstructorsJFrame extends JFrame {
 		});
 		btnAddAccred.setBounds(373, 296, 89, 23);
 		tablePanel.add(btnAddAccred);
+
+		//Delete instructor
+		JButton btnDeletion = new JButton("Supprimer");
+		btnDeletion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(selectedInstructor.deleteInstructor(instructorDAO)) {
+						model.deleteInstructor(selectedRow);
+						resetFields();
+						JOptionPane.showMessageDialog(null, "Instructeur supprimé avec succès !");
+					}
+				}catch (NullPointerException ex) {
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un instructeur.");
+				}catch (IndexOutOfBoundsException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+		btnDeletion.setBounds(201, 529, 89, 23);
+		tablePanel.add(btnDeletion);
 	}
 }

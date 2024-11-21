@@ -102,18 +102,18 @@ public class SkiersJFrame extends JFrame {
 		contentPane.add(tablePanel);
 		
 		//Handling click on a row from the table
-				table.getSelectionModel().addListSelectionListener(event -> {
-					if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
-						selectedRow = table.getSelectedRow();
-						
-						selectedSkier = model.getSkierAt(selectedRow);
-						
-						surnameTF.setText(selectedSkier.getSurname());
-						nameTF.setText(selectedSkier.getName());
-						phoneTF.setText(String.valueOf(selectedSkier.getPhoneNumber()));
-						dobChooser.setDate(Date.from(selectedSkier.getDateOfBirth().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-					}
-				});
+		table.getSelectionModel().addListSelectionListener(event -> {
+			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+				selectedRow = table.getSelectedRow();
+				
+				selectedSkier = model.getSkierAt(selectedRow);
+				
+				surnameTF.setText(selectedSkier.getSurname());
+				nameTF.setText(selectedSkier.getName());
+				phoneTF.setText(String.valueOf(selectedSkier.getPhoneNumber()));
+				dobChooser.setDate(Date.from(selectedSkier.getDateOfBirth().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			}
+		});
 		
 		JLabel surnameLabel = new JLabel("Nom");
 		surnameLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));

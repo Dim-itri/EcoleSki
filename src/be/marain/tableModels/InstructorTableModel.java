@@ -65,4 +65,17 @@ public class InstructorTableModel extends AbstractTableModel{
 			throw new NullPointerException("Aucun Instructeur à créer");
 		}
 	}
+	
+	public Instructor getInstructorAt(int rowIndex) {
+		return instructors.get(rowIndex);
+	}
+	
+	public void deleteInstructor(int rowIndex) {
+		if(rowIndex >= 0 && rowIndex < instructors.size()) {
+			instructors.remove(rowIndex);
+			fireTableRowsDeleted(rowIndex, rowIndex);
+		}else {
+			throw new IndexOutOfBoundsException("Impossible de supprimer le skieur à l'index : " + rowIndex);
+		}
+	}
 }

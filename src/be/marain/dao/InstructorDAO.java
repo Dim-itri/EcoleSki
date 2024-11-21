@@ -79,8 +79,21 @@ public class InstructorDAO extends DAO<Instructor> {
 
 	@Override
 	public boolean delete(Instructor instructor) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean success;
+		
+		try {
+			String query = "DELETE FROM instructor WHERE instructorid = ?";
+			
+			PreparedStatement statement = connect.prepareStatement(query);
+			statement.setInt(1, instructor.getPersonId());
+			
+			success = statement.executeUpdate() > 0;			
+		}catch (SQLException e) {
+			success = false;
+			e.printStackTrace();
+		}
+		
+		return success;
 	}
 
 	@Override

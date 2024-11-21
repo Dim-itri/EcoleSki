@@ -52,8 +52,10 @@ public class Instructor extends Person {
 		return dao.create(this);
 	}
 
-	public boolean deleteInstructor() {
-		return false;
+	public boolean deleteInstructor(InstructorDAO dao) {
+		accreditations.clear();
+		accreditations = null;
+		return dao.delete(this);
 	}
 
 	public boolean updateInstructor() {
