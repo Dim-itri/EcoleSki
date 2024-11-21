@@ -10,16 +10,15 @@ public class Instructor extends Person {
 	private List<Accreditation> accreditations;
 
 	public Instructor(int id, String name, String surname, LocalDate dob, int phone, Accreditation accreditation) {
-		this(name, surname, dob, phone, accreditation);
-		setPersonId(id);
+		super(id, name, surname, dob, phone);
+		accreditations = new ArrayList<Accreditation>();
+		if(accreditation != null) {
+			accreditations.add(accreditation);
+		}
 	}
 
 	public Instructor(String name, String surname, LocalDate dob, int phone, Accreditation accreditation) {
-		super(name, surname, dob, phone);
-		accreditations = new ArrayList<Accreditation>();
-		if (accreditation != null) {
-			accreditations.add(accreditation);
-		}
+		this(0, name, surname, dob, phone, accreditation);
 	}
 	
 	public String getInstructorAccreditationString() {
@@ -58,8 +57,8 @@ public class Instructor extends Person {
 		return dao.delete(this);
 	}
 
-	public boolean updateInstructor() {
-		return false;
+	public boolean updateInstructor(InstructorDAO dao) {
+		return dao.update(this);
 	}
 
 	public void addAccreditation(Accreditation newAcc) throws NullPointerException{

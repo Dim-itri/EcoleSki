@@ -1,6 +1,7 @@
 package be.marain.classes;
 
 import java.util.List;
+import java.util.Objects;
 
 import be.marain.dao.AccreditationDAO;
 
@@ -36,5 +37,18 @@ public class Accreditation {
 	@Override
 	public String toString() {
 		return accreditationId + " - " + name;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj) return true;
+	    if (obj == null || getClass() != obj.getClass()) return false;
+	    Accreditation that = (Accreditation) obj;
+	    return accreditationId == that.accreditationId;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return Objects.hash(accreditationId); // Utilise l'attribut unique pour générer le hashCode
 	}
 }

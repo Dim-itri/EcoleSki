@@ -41,15 +41,13 @@ public class Lesson {
 	}
 
 	public Lesson(int id, int min, int max, LocalDate date) {
-		setDate(date);
 		setLessonId(id);
 		setMaxBookings(max);
 		setMinBookings(min);
+		setDate(date);
 	}
 
 	public Lesson(int min, int max, LocalDate date) {
-		setDate(date);
-		setMaxBookings(max);
-		setMinBookings(min);
+		this(0, min, max, date);
 	}
 }

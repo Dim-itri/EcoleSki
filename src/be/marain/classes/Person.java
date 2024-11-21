@@ -9,9 +9,9 @@ public abstract class Person {
 	private String surname;
 	private LocalDate dateOfBirth;
 	private int phoneNumber;
-	private final String nameRegEx = "^[A-ZÀ-Ÿ][a-zà-ÿ]+(?:[-\\s][A-ZÀ-Ÿ][a-zà-ÿ]+)*$";
-	private final String dobRegEx = "^(19[0-9]{2}|20[0-9]{2})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
-	private final String phoneRegEx = "^(\\+\\d{1,3})?\\s?(\\(?\\d{1,4}\\)?)?[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}$";
+	private static final String nameRegEx = "^[A-ZÀ-Ÿ][a-zà-ÿ]+(?:[-\\s][A-ZÀ-Ÿ][a-zà-ÿ]+)*$";
+	private static final String dobRegEx = "^(19[0-9]{2}|20[0-9]{2})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
+	private static final String phoneRegEx = "^(\\+\\d{1,3})?\\s?(\\(?\\d{1,4}\\)?)?[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}$";
 
 	
 	public LocalDate getDateOfBirth() {
@@ -71,15 +71,14 @@ public abstract class Person {
 	}
 
 	public Person(int id, String name, String surname, LocalDate dob, int phone) {
-		this(name, surname, dob, phone);
-		this.personId = id;
-	}
-
-	public Person(String name, String surname, LocalDate dob, int phone) {
-		personId = 0;
+		setPersonId(id);
 		setName(name);
 		setSurname(surname);
 		setPhoneNumber(phone);
 		setDateOfBirth(dob);
+	}
+
+	public Person(String name, String surname, LocalDate dob, int phone) {
+		this(0, name, surname, dob, phone);
 	}
 }

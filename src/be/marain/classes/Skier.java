@@ -8,12 +8,11 @@ import be.marain.dao.SkierDAO;
 
 public class Skier extends Person {
 	public Skier(int id, String name, String surname, LocalDate dob, int phone) {
-		this(name, surname, dob, phone);
-		setPersonId(id);
+		super(id, name, surname, dob, phone);
 	}
 
 	public Skier(String name, String surname, LocalDate dob, int phone) {
-		super(name, surname, dob, phone);
+		this(0, name, surname, dob, phone);
 	}
 
 	public boolean createSkier(SkierDAO dao) {

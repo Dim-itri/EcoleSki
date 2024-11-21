@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -104,8 +105,8 @@ public class InstructorsJFrame extends JFrame {
 		table.getSelectionModel().addListSelectionListener(event -> {
 			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
 				selectedRow = table.getSelectedRow();
-				
 				selectedInstructor = model.getInstructorAt(selectedRow);
+				selectedAccreditations = selectedInstructor.getInstructorAccreditations();
 				
 				tfSurname.setText(selectedInstructor.getSurname());
 				tfName.setText(selectedInstructor.getName());
@@ -210,7 +211,7 @@ public class InstructorsJFrame extends JFrame {
 		accredCB.setBounds(234, 296, 129, 22);
 		tablePanel.add(accredCB);
 		
-		//Adding accreditations to new Instructor
+		//Adding accreditations selected
 		selectedAccreditations = new ArrayList<Accreditation>();
 		JButton btnAddAccred = new JButton("Ajouter");
 		btnAddAccred.addActionListener(new ActionListener() {
@@ -224,6 +225,20 @@ public class InstructorsJFrame extends JFrame {
 		});
 		btnAddAccred.setBounds(373, 296, 89, 23);
 		tablePanel.add(btnAddAccred);
+		
+		//Removing accreditations selected
+		JButton btnDeleteAccred = new JButton("Supprimer");
+		btnDeleteAccred.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Accreditation selectedAccreditation = (Accreditation)accredCB.getSelectedItem();
+				if(selectedAccreditation != null && selectedAccreditations.contains(selectedAccreditation)) {
+					selectedAccreditations.remove(selectedAccreditation);
+					JOptionPane.showMessageDialog(null, "Accréditation désélectionnée.");
+				}
+			}
+		});
+		btnDeleteAccred.setBounds(472, 296, 89, 23);
+		tablePanel.add(btnDeleteAccred);
 
 		//Delete instructor
 		JButton btnDeletion = new JButton("Supprimer");
@@ -246,5 +261,44 @@ public class InstructorsJFrame extends JFrame {
 		});
 		btnDeletion.setBounds(201, 529, 89, 23);
 		tablePanel.add(btnDeletion);
+	
+		//Updating instructor
+		JButton btnUpdate = new JButton("Modifier");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String instructorName = tfName.getText();
+					String instructorSurname = tfSurname.getText();
+					int instructorPhone = Integer.parseInt(tfPhone.getText());
+					LocalDate instructorDob = dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					
+					selectedInstructor.setName(instructorName);
+					selectedInstructor.setSurname(instructorSurname);
+					selectedInstructor.setPhoneNumber(instructorPhone);
+					selectedInstructor.setDateOfBirth(instructorDob);
+					
+					List<Accreditation> accreditationscopy = new CopyOnWriteArrayList<Accreditation>(selectedAccreditations);
+					
+					selectedInstructor.getInstructorAccreditations().clear();
+					
+					for(Accreditation curr:accreditationscopy) {
+						selectedInstructor.addAccreditation(curr);
+					}
+					
+					if(selectedInstructor.updateInstructor(instructorDAO)) {
+						model.updateInstructor(selectedRow, selectedInstructor);
+						JOptionPane.showMessageDialog(null, "Instructeur modifié !");
+					}
+				}catch (NullPointerException ex) {
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un instructeur");
+				}catch (IndexOutOfBoundsException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+		btnUpdate.setBounds(300, 529, 89, 23);
+		tablePanel.add(btnUpdate);
 	}
 }

@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import com.toedter.calendar.IDateEditor;
 
 import be.marain.classes.Accreditation;
@@ -49,28 +51,20 @@ public class InstructorDAO extends DAO<Instructor> {
 			}
 			
 			//Creating the link accreditation-Instructor in DB
-			StringBuilder queryBuilder = new StringBuilder(
-					"INSERT INTO instructoraccred (instructorid, accreditationid) VALUES ");
+			query = "INSERT INTO instructoraccred (instructorid, accreditationid) VALUES (?, ?)";
+			statement = connect.prepareStatement(query);
 			List<Accreditation> accreditations = newInstructor.getInstructorAccreditations();
-			for(int i=0;i<accreditations.size();i++) {
-				queryBuilder.append("(?, ?)");
-				if(i<accreditations.size()-1) {
-					queryBuilder.append(", ");
-				}
+			
+			for(Accreditation curr:accreditations) {
+				statement.setInt(1, newInstructor.getPersonId());
+				statement.setInt(2, curr.getAccreditationId());
+				statement.addBatch();
 			}
 			
-			statement = connect.prepareStatement(queryBuilder.toString());
-			
-			int paramIndex = 1;
-			
-			for(Accreditation currAccred:accreditations) {
-				statement.setInt(paramIndex++, newInstructor.getPersonId());
-				statement.setInt(paramIndex++, currAccred.getAccreditationId());
-			}
-			
-			success = statement.executeUpdate() > 0;
+			statement.executeBatch();
 			statement.close();
 		}catch (SQLException e) {
+			success = false;
 			e.printStackTrace();
 		}
 		
@@ -87,7 +81,9 @@ public class InstructorDAO extends DAO<Instructor> {
 			PreparedStatement statement = connect.prepareStatement(query);
 			statement.setInt(1, instructor.getPersonId());
 			
-			success = statement.executeUpdate() > 0;			
+			success = statement.executeUpdate() > 0;	
+			
+			statement.close();
 		}catch (SQLException e) {
 			success = false;
 			e.printStackTrace();
@@ -98,8 +94,45 @@ public class InstructorDAO extends DAO<Instructor> {
 
 	@Override
 	public boolean update(Instructor instructor) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean success;
+		
+		try {
+			String query = "UPDATE instructor SET name = ?, surname = ?, "
+					+ "dateofbirth = ?, phonenumber = ? WHERE instructorid = ?";
+			
+			PreparedStatement statement = connect.prepareStatement(query);
+			
+			statement.setString(1, instructor.getName());
+			statement.setString(2, instructor.getSurname());
+			statement.setDate(3, java.sql.Date.valueOf(instructor.getDateOfBirth()));
+			statement.setInt(4, instructor.getPhoneNumber());
+			statement.setInt(5, instructor.getPersonId());
+			
+			success = statement.executeUpdate() > 0;
+			
+			query = "DELETE FROM instructoraccred WHERE instructorid = ?";
+			statement = connect.prepareStatement(query);
+			statement.setInt(1, instructor.getPersonId());
+			
+			success = statement.executeUpdate() > 0;
+			
+			query = "INSERT INTO instructoraccred(instructorid, accreditationid) VALUES (?, ?)";
+			statement = connect.prepareStatement(query);
+					
+			for(Accreditation curr : instructor.getInstructorAccreditations()) {
+				statement.setInt(1, instructor.getPersonId());
+				statement.setInt(2, curr.getAccreditationId());
+				statement.addBatch();
+			}
+			
+			statement.executeBatch();
+			statement.close();
+		}catch (SQLException e) {
+			success = false;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		return success;
 	}
 
 	@Override
@@ -149,6 +182,9 @@ public class InstructorDAO extends DAO<Instructor> {
 	            }
 								
 				instructors.add(currInstructor);
+				
+				statement.close();
+				accredRes.close();
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();

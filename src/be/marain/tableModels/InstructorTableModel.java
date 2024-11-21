@@ -78,4 +78,13 @@ public class InstructorTableModel extends AbstractTableModel{
 			throw new IndexOutOfBoundsException("Impossible de supprimer le skieur à l'index : " + rowIndex);
 		}
 	}
+	
+	public void updateInstructor(int rowIndex, Instructor updatedInstructor) {
+		if(rowIndex >= 0 && rowIndex < instructors.size()) {
+			instructors.set(rowIndex, updatedInstructor);
+			fireTableRowsUpdated(rowIndex, rowIndex);
+		}else {
+			throw new IndexOutOfBoundsException("Impossible de modifier l'instructeur : " + rowIndex);
+		}
+	}
 }
