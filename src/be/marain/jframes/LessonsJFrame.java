@@ -1,10 +1,13 @@
 package be.marain.jframes;
 
 import java.awt.EventQueue;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import be.marain.classes.Lesson;
 
 public class LessonsJFrame extends JFrame {
 
@@ -32,7 +35,7 @@ public class LessonsJFrame extends JFrame {
 	 */
 	public LessonsJFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1254, 738);
+		setBounds(100, 100, 1330, 789);
 		setTitle("Leçons");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -42,6 +45,9 @@ public class LessonsJFrame extends JFrame {
 		JPanel tablePanel = new JPanel();
 		tablePanel.setBounds(5, 5, 1293, 739);
 		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+		
+		List<Lesson> lessons = Lesson
+		
 		
 		contentPane.setLayout(null);
 		tablePanel.setLayout(null);
