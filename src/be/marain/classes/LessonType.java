@@ -34,4 +34,9 @@ public class LessonType {
 		setLtId(id);
 		setPrice(price);
 	}
+	
+	@Override
+	public String toString() {
+		return "Niveau : " + level + ", Prix : " + price;
+	}
 }

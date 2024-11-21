@@ -21,6 +21,13 @@ public class Instructor extends Person {
 		this(0, name, surname, dob, phone, accreditation);
 	}
 	
+	@Override
+	public String toString() {
+	    String accreditationsString = getInstructorAccreditationString();
+	    return String.format("Instructeur : %s %s\nID : %d\nDate de naissance : %s\nTéléphone : %d\nAccréditations : %s", 
+	                          getName(), getSurname(), getPersonId(), getDateOfBirth(), getPhoneNumber(), accreditationsString);
+	}
+	
 	public String getInstructorAccreditationString() {
 		if (accreditations.isEmpty()) {
 	        return "Aucune";
