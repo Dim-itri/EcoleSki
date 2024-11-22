@@ -17,6 +17,8 @@ public class Lesson {
 		setLessonId(id);
 		setMaxBookings(max);
 		setMinBookings(min);
+		setInstructor(instructor);
+		setLessonType(lessonType);
 		setDate(date);
 	}
 
@@ -24,7 +26,7 @@ public class Lesson {
 		this(0, min, max, date, instructor, lessonType);
 	}
 	
-	public List<Lesson> getAllLessons(LessonDAO dao) {
+	public static List<Lesson> getAllLessons(LessonDAO dao) {
 		return dao.findAll();
 	}
 	

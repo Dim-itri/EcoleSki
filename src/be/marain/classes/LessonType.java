@@ -3,7 +3,8 @@ package be.marain.classes;
 public class LessonType {
 	private int ltId;
 	private String level;
-	private int price;
+	private double price;
+	private Accreditation accreditation;
 
 	public String getLevel() {
 		return level;
@@ -13,7 +14,7 @@ public class LessonType {
 		return ltId;
 	}
 
-	public int getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
@@ -25,14 +26,21 @@ public class LessonType {
 		this.ltId = ltId;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
+	
+	public void setAccreditation(Accreditation accreditation) {
+		if(accreditation != null) {
+			this.accreditation = accreditation;
+		}
+	}
 
-	public LessonType(int id, String level, int price) {
+	public LessonType(int id, String level, double price, Accreditation accreditation) {
 		setLevel(level);
 		setLtId(id);
 		setPrice(price);
+		setAccreditation(accreditation);
 	}
 	
 	@Override

@@ -29,6 +29,11 @@ public class LessonTableModel extends AbstractTableModel{
 	public int getColumnCount() {
 		return columnsName.length;
 	}
+	
+	@Override
+	public String getColumnName(int column) {
+		return columnsName[column];
+	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
