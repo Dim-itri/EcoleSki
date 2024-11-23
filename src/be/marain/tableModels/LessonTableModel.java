@@ -47,7 +47,7 @@ public class LessonTableModel extends AbstractTableModel{
 		case 2:
 			return lesson.getMaxBookings();
 		case 3:
-			return lesson.getInstructor().toString();
+			return lesson.getInstructor().getName() + " " + lesson.getInstructor().getSurname();
 		case 4:	
 			return lesson.getLessonType().toString();
 		default:

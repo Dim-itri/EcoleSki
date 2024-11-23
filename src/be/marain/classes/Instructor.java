@@ -24,7 +24,7 @@ public class Instructor extends Person {
 	@Override
 	public String toString() {
 	    String accreditationsString = getInstructorAccreditationString();
-	    return String.format("Instructeur : %s %s\nID : %d\nDate de naissance : %s\nTéléphone : %d\nAccréditations : %s", 
+	    return String.format("Instructeur : %s %s, ID : %d, Date de naissance : %s, Téléphone : %d, Accréditations : %s", 
 	                          getName(), getSurname(), getPersonId(), getDateOfBirth(), getPhoneNumber(), accreditationsString);
 	}
 	

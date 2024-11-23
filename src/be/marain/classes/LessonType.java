@@ -1,11 +1,19 @@
 package be.marain.classes;
 
+import java.util.List;
+
+import be.marain.dao.LessonTypeDAO;
+
 public class LessonType {
 	private int ltId;
 	private String level;
 	private double price;
 	private Accreditation accreditation;
-
+	
+	public static List<LessonType> getAllLessonTypes(LessonTypeDAO dao){
+		return dao.findAll();
+	}
+	
 	public String getLevel() {
 		return level;
 	}
