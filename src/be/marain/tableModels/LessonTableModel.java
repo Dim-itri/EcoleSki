@@ -43,6 +43,19 @@ public class LessonTableModel extends AbstractTableModel{
 	public String getColumnName(int column) {
 		return columnsName[column];
 	}
+	
+	public Lesson getLessonAt(int rowIndex) {
+		return lessons.get(rowIndex);
+	}
+	
+	public void deleteLesson(int rowIndex) {
+		if(rowIndex >= 0 && rowIndex < lessons.size()) {
+			lessons.remove(rowIndex);
+			fireTableRowsDeleted(rowIndex, rowIndex);
+		}else {
+			throw new IllegalArgumentException("Impossible de supprimer la leçon à l'index : " + rowIndex);
+		}		
+	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {

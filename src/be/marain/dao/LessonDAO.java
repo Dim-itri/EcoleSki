@@ -56,9 +56,23 @@ public class LessonDAO extends DAO<Lesson> {
 	}
 
 	@Override
-	public boolean delete(Lesson obj) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean delete(Lesson lesson) {
+		boolean success;
+		
+		try {
+			String query = "DELETE FROM lesson WHERE lessonid = ?";
+			PreparedStatement statement = connect.prepareStatement(query);
+			statement.setInt(1, lesson.getLessonId());
+			
+			success = statement.executeUpdate() > 0;
+			
+			statement.close();
+		}catch (SQLException e) {
+			success = false;
+			e.printStackTrace();
+		}
+		
+		return success;
 	}
 
 	@Override

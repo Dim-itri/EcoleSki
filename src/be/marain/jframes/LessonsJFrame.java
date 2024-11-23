@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -42,6 +43,9 @@ public class LessonsJFrame extends JFrame {
 	private Instructor selectedInstructor;
 	private LessonType selectedLessonType;
 	private JComboBox<Instructor> cbInstructor;
+	private Lesson selectedLesson;
+	private int selectedRow;
+	private JDateChooser dclessonDate;
 
 	/**
 	 * Launch the application.
@@ -57,6 +61,16 @@ public class LessonsJFrame extends JFrame {
 				}
 			}
 		});
+	}
+	
+	public void resetFields() {
+		tfMax.setText("");
+		tfMin.setText("");
+		dclessonDate.setDate(null);
+		selectedRow = -1;
+		selectedInstructor = null;
+		selectedLesson = null;
+		selectedLessonType = null;
 	}
 
 	/**
@@ -97,6 +111,19 @@ public class LessonsJFrame extends JFrame {
 		tablePanel.add(scrollPane);
 		contentPane.add(tablePanel);
 		
+		table.getSelectionModel().addListSelectionListener(event -> {
+			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+				selectedRow = table.getSelectedRow();
+				selectedLesson = model.getLessonAt(selectedRow);
+				selectedInstructor = selectedLesson.getInstructor();
+				selectedLessonType = selectedLesson.getLessonType();
+				
+				tfMin.setText(String. valueOf(selectedLesson.getMinBookings()));
+				tfMax.setText(String.valueOf(selectedLesson.getMaxBookings()));
+				dclessonDate.setDate(Date.from(selectedLesson.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			}
+		});
+		
 		JLabel lblMinBooking = new JLabel("Min. Réservations");
 		lblMinBooking.setBounds(10, 101, 86, 24);
 		tablePanel.add(lblMinBooking);
@@ -127,7 +154,7 @@ public class LessonsJFrame extends JFrame {
 		tfMax.setBounds(106, 167, 96, 19);
 		tablePanel.add(tfMax);
 		
-		JDateChooser dclessonDate = new JDateChooser();
+		dclessonDate = new JDateChooser();
 		dclessonDate.setBounds(106, 220, 96, 19);
 		tablePanel.add(dclessonDate);
 		
@@ -195,5 +222,26 @@ public class LessonsJFrame extends JFrame {
 		});
 		btnCreate.setBounds(7, 492, 89, 23);
 		tablePanel.add(btnCreate);	
+		
+		JButton btnDelete = new JButton("Supprimer");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(selectedLesson.deleteLesson(lessonDAO)) {
+						model.deleteLesson(selectedRow);
+						resetFields();
+						JOptionPane.showMessageDialog(null, "Leçon supprimée !");
+					}
+				} catch (NullPointerException e2) {
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un instructeur.");
+				}catch (IndexOutOfBoundsException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+		btnDelete.setBounds(106, 492, 89, 23);
+		tablePanel.add(btnDelete);
 	}
 }

@@ -37,7 +37,9 @@ public class Lesson {
 	}
 	
 	public boolean deleteLesson(LessonDAO dao) {
-		return false;
+		instructor = null;
+		lessonType = null;
+		return dao.delete(this);
 	}
 	
 	public boolean updateLesson(LessonDAO dao) {

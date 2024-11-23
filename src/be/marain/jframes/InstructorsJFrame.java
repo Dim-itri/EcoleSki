@@ -115,9 +115,6 @@ public class InstructorsJFrame extends JFrame {
 			}
 		});
 		
-		
-		//Instructor Creation
-		
 		JButton btnHome = new JButton("Accueil");
 		btnHome.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
