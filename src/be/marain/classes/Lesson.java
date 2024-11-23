@@ -2,6 +2,7 @@ package be.marain.classes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import be.marain.dao.LessonDAO;
 
@@ -12,6 +13,7 @@ public class Lesson {
 	private LocalDate date;
 	private Instructor instructor;
 	private LessonType lessonType;
+	private static final String dateRegEx = "^(19[0-9]{2}|20[0-9]{2})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
 	
 	public Lesson(int id, int min, int max, LocalDate date, Instructor instructor, LessonType lessonType) {
 		setLessonId(id);
@@ -31,7 +33,7 @@ public class Lesson {
 	}
 	
 	public boolean addLesson(LessonDAO dao) {
-		return false;
+		return dao.create(this);
 	}
 	
 	public boolean deleteLesson(LessonDAO dao) {
@@ -59,19 +61,31 @@ public class Lesson {
 	}
 
 	public void setDate(LocalDate date) {
-		this.date = date;
+		if (Pattern.matches(dateRegEx, date.toString())) {
+			this.date = date;
+		}else {
+			throw new IllegalArgumentException("Date invalide.");
+		}
 	}
 
-	public void setLessonId(int lessonId) {
+	public void setLessonId(int lessonId) throws IllegalArgumentException{
 		this.lessonId = lessonId;
 	}
 
 	public void setMaxBookings(int maxBookings) {
-		this.maxBookings = maxBookings;
+		if(maxBookings > 0) {
+			this.maxBookings = maxBookings;
+		}else {
+			throw new IllegalArgumentException("Maximum invalide.");
+		}
 	}
 
-	public void setMinBookings(int minBookings) {
-		this.minBookings = minBookings;
+	public void setMinBookings(int minBookings) throws IllegalArgumentException{
+		if(minBookings > 0 && minBookings < maxBookings) {
+			this.minBookings = minBookings;
+		}else {
+			throw new IllegalArgumentException("Minimum invalide.");
+		}
 	}
 
 	public LocalDate getDate() {
@@ -96,5 +110,10 @@ public class Lesson {
 	
 	public LessonType getLessonType() {
 		return lessonType;
+	}
+	
+	@Override
+	public String toString() {
+		return "Id : " + lessonId + ", Min : " + minBookings + ", Max : " + maxBookings + ", Date : " + date.toString();
 	}
 }

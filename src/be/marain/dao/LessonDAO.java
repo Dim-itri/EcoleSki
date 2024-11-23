@@ -22,9 +22,37 @@ public class LessonDAO extends DAO<Lesson> {
 	}
 
 	@Override
-	public boolean create(Lesson obj) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean create(Lesson lesson) {
+		boolean success;
+		
+		try {
+			String[] returnCols = {"lessonid"};
+			String query = "INSERT INTO lesson (minbookings, maxbookings, instructorid, ltid, lessondate) VALUES(?, ?, ?, ?, ?)";
+			PreparedStatement statement = connect.prepareStatement(query, returnCols);
+			
+			statement.setInt(1, lesson.getMinBookings());
+			statement.setInt(2, lesson.getMaxBookings());
+			statement.setInt(3, lesson.getInstructor().getPersonId());
+			statement.setInt(4, lesson.getLessonType().getLtId());
+			statement.setDate(5, java.sql.Date.valueOf(lesson.getDate()));
+			
+			success = statement.executeUpdate() > 0;
+			
+			if(success) {
+				ResultSet generatedKeys = statement.getGeneratedKeys();
+				
+				if(generatedKeys.next()) {
+					int generatedId = generatedKeys.getInt(1);
+					lesson.setLessonId(generatedId);
+				}
+			}
+			
+		}catch (Exception e) {
+			success = false;
+			e.printStackTrace();
+		}
+		
+		return success;
 	}
 
 	@Override

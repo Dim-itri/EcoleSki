@@ -43,6 +43,10 @@ public class LessonType {
 			this.accreditation = accreditation;
 		}
 	}
+	
+	public Accreditation getAccreditation() {
+		return accreditation;
+	}
 
 	public LessonType(int id, String level, double price, Accreditation accreditation) {
 		setLevel(level);

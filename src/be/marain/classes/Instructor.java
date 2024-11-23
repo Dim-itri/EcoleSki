@@ -3,6 +3,7 @@ package be.marain.classes;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes.Name;
 
 import be.marain.dao.InstructorDAO;
 
@@ -26,6 +27,10 @@ public class Instructor extends Person {
 	    String accreditationsString = getInstructorAccreditationString();
 	    return String.format("Instructeur : %s %s, ID : %d, Date de naissance : %s, Téléphone : %d, Accréditations : %s", 
 	                          getName(), getSurname(), getPersonId(), getDateOfBirth(), getPhoneNumber(), accreditationsString);
+	}
+	
+	public String getDisplayName() {
+		return getName() + " " + getSurname();
 	}
 	
 	public String getInstructorAccreditationString() {

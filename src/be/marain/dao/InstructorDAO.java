@@ -29,7 +29,7 @@ public class InstructorDAO extends DAO<Instructor> {
 		
 		try {
 			String[] returnCols = {"instructorid"}; 
-			String query = "Insert into instructor (name, surname, phonenumber, dateofbirth)"
+			String query = "Insert into instructor (name, surname, phonenumber, dateofbirth) "
 					+ "VALUES (?, ?, ?, ?)";
 			
 			PreparedStatement statement = connect.prepareStatement(query, returnCols);

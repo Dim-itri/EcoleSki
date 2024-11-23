@@ -20,6 +20,15 @@ public class LessonTableModel extends AbstractTableModel{
 		}
 	}
 	
+	public void addLesson(Lesson newLesson) throws NullPointerException{
+		if(newLesson != null) {
+			lessons.add(newLesson);
+			fireTableRowsInserted(lessons.size()-1, lessons.size()-1);
+		}else {
+			throw new NullPointerException("Aucune leçon à créer.");
+		}
+	}
+	
 	@Override
 	public int getRowCount() {
 		return lessons.size();

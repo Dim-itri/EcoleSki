@@ -1,12 +1,14 @@
 package be.marain.jframes;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -21,9 +23,12 @@ import be.marain.dao.LessonDAO;
 import be.marain.dao.LessonTypeDAO;
 import be.marain.tableModels.LessonTableModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
+
 import javax.swing.JComboBox;
+import javax.swing.JButton;
 
 public class LessonsJFrame extends JFrame {
 
@@ -34,6 +39,9 @@ public class LessonsJFrame extends JFrame {
 	private JPanel contentPane;
 	private JTextField tfMin;
 	private JTextField tfMax;
+	private Instructor selectedInstructor;
+	private LessonType selectedLessonType;
+	private JComboBox<Instructor> cbInstructor;
 
 	/**
 	 * Launch the application.
@@ -102,11 +110,11 @@ public class LessonsJFrame extends JFrame {
 		tablePanel.add(lblDate);
 		
 		JLabel lblInstructor = new JLabel("Instructeur");
-		lblInstructor.setBounds(10, 285, 86, 24);
+		lblInstructor.setBounds(10, 347, 86, 24);
 		tablePanel.add(lblInstructor);
 		
 		JLabel lblLessonType = new JLabel("Type");
-		lblLessonType.setBounds(10, 342, 86, 24);
+		lblLessonType.setBounds(10, 285, 86, 24);
 		tablePanel.add(lblLessonType);
 		
 		tfMin = new JTextField();
@@ -123,18 +131,69 @@ public class LessonsJFrame extends JFrame {
 		dclessonDate.setBounds(106, 220, 96, 19);
 		tablePanel.add(dclessonDate);
 		
-		JComboBox<Instructor> cbInstructor = new JComboBox<Instructor>();
-		for(Instructor curr:instructors) {
-			cbInstructor.addItem(curr);
-		}		
-		cbInstructor.setBounds(106, 287, 292, 21);
-		tablePanel.add(cbInstructor);
-		
 		JComboBox<LessonType> cbLessonType = new JComboBox<LessonType>();
 		for(LessonType lt:lessonTypes) {
 			cbLessonType.addItem(lt);
 		}
-		cbLessonType.setBounds(106, 344, 292, 21);
+		cbLessonType.setBounds(106, 287, 292, 21);
 		tablePanel.add(cbLessonType);
+		
+		cbLessonType.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				selectedLessonType = (LessonType)cbLessonType.getSelectedItem(); 
+				
+				cbInstructor = new JComboBox<Instructor>();
+				for(Instructor curr:instructors) {
+					for(int i=0;i<curr.getInstructorAccreditations().size();i++) {
+						if(selectedLessonType.getAccreditation().getAccreditationId() == curr.getInstructorAccreditations().get(i).getAccreditationId()) {
+							cbInstructor.addItem(curr);
+						}
+					}
+				}
+				cbInstructor.setBounds(106, 344, 292, 21);
+				tablePanel.add(cbInstructor);
+			}
+		});
+		
+		
+		JButton btnHome = new JButton("Accueil");
+		btnHome.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Index index = new Index();
+				index.setVisible(true);
+				dispose();
+			}
+		});
+		btnHome.setBounds(7, 705, 89, 23);
+		tablePanel.add(btnHome);
+		
+		JButton btnCreate = new JButton("Créer");
+		btnCreate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int minBook = Integer.parseInt(tfMin.getText());
+					int maxBook = Integer.parseInt(tfMax.getText());
+					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					selectedInstructor = (Instructor)cbInstructor.getSelectedItem();
+					
+					Lesson newLesson = new Lesson(minBook, maxBook, date, selectedInstructor, selectedLessonType);
+					
+					if(newLesson.addLesson(lessonDAO)) {
+						model.addLesson(newLesson);
+						JOptionPane.showMessageDialog(null, "Leçon créée !");
+					}
+				}catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Veuillez entrer un nombre de réservations correct.");
+				}catch (IllegalArgumentException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+				
+			}
+		});
+		btnCreate.setBounds(7, 492, 89, 23);
+		tablePanel.add(btnCreate);	
 	}
 }
