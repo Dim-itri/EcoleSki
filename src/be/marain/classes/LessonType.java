@@ -59,4 +59,18 @@ public class LessonType {
 	public String toString() {
 		return "Niveau : " + level + ", Prix : " + price;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj != null && obj.getClass() == this.getClass() && ((LessonType)obj).getLtId() == ltId) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Integer.hashCode(ltId);
+	}
 }

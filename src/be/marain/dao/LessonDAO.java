@@ -46,7 +46,7 @@ public class LessonDAO extends DAO<Lesson> {
 					lesson.setLessonId(generatedId);
 				}
 			}
-			
+			statement.close();
 		}catch (Exception e) {
 			success = false;
 			e.printStackTrace();
@@ -76,9 +76,29 @@ public class LessonDAO extends DAO<Lesson> {
 	}
 
 	@Override
-	public boolean update(Lesson obj) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean update(Lesson updatedLesson) {
+		boolean success;
+		
+		try {
+			String query = "UPDATE lesson SET minbookings = ?, maxbookings = ? , instructorid = ?, ltid = ?, lessondate = ? "
+					+ "WHERE lessonid = ?";
+			
+			PreparedStatement statement = connect.prepareStatement(query);
+			statement.setInt(1, updatedLesson.getMinBookings());
+			statement.setInt(2, updatedLesson.getMaxBookings());
+			statement.setInt(3, updatedLesson.getInstructor().getPersonId());
+			statement.setInt(4, updatedLesson.getLessonType().getLtId());
+			statement.setDate(5, java.sql.Date.valueOf(updatedLesson.getDate()));
+			statement.setInt(6, updatedLesson.getLessonId());
+			
+			success = statement.executeUpdate() > 0;
+			statement.close();
+		}catch (SQLException e) {
+			success = false;
+			e.printStackTrace();
+		}
+		
+		return success;
 	}
 
 	@Override

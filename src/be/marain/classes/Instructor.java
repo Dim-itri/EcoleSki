@@ -84,4 +84,18 @@ public class Instructor extends Person {
 	public void deleteAccreditation(Accreditation acc) {
 		accreditations.remove(acc);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj != null &&  obj.getClass() == this.getClass() && ((Instructor)obj).getPersonId() == getPersonId()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

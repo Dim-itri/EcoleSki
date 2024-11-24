@@ -43,6 +43,7 @@ public class LessonsJFrame extends JFrame {
 	private Instructor selectedInstructor;
 	private LessonType selectedLessonType;
 	private JComboBox<Instructor> cbInstructor;
+	private JComboBox<LessonType> cbLessonType;
 	private Lesson selectedLesson;
 	private int selectedRow;
 	private JDateChooser dclessonDate;
@@ -111,6 +112,30 @@ public class LessonsJFrame extends JFrame {
 		tablePanel.add(scrollPane);
 		contentPane.add(tablePanel);
 		
+		cbLessonType = new JComboBox<LessonType>();
+		for(LessonType lt:lessonTypes) {
+			cbLessonType.addItem(lt);
+		}
+		cbLessonType.setBounds(106, 287, 292, 21);
+		tablePanel.add(cbLessonType);
+		
+		cbLessonType.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				selectedLessonType = (LessonType)cbLessonType.getSelectedItem(); 
+				
+				cbInstructor.removeAllItems();
+				
+				for(Instructor curr:instructors) {
+					for(int i=0;i<curr.getInstructorAccreditations().size();i++) {
+						if(selectedLessonType.getAccreditation().getAccreditationId() == curr.getInstructorAccreditations().get(i).getAccreditationId()) {
+							cbInstructor.addItem(curr);
+						}
+					}
+				}
+			}
+		});
+		
 		table.getSelectionModel().addListSelectionListener(event -> {
 			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
 				selectedRow = table.getSelectedRow();
@@ -118,9 +143,15 @@ public class LessonsJFrame extends JFrame {
 				selectedInstructor = selectedLesson.getInstructor();
 				selectedLessonType = selectedLesson.getLessonType();
 				
+				cbLessonType.setSelectedItem(selectedLessonType);
+				
 				tfMin.setText(String. valueOf(selectedLesson.getMinBookings()));
 				tfMax.setText(String.valueOf(selectedLesson.getMaxBookings()));
 				dclessonDate.setDate(Date.from(selectedLesson.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+				
+				if(cbInstructor.getItemCount() > 0) {
+					cbInstructor.removeAllItems();
+				}
 			}
 		});
 		
@@ -158,31 +189,9 @@ public class LessonsJFrame extends JFrame {
 		dclessonDate.setBounds(106, 220, 96, 19);
 		tablePanel.add(dclessonDate);
 		
-		JComboBox<LessonType> cbLessonType = new JComboBox<LessonType>();
-		for(LessonType lt:lessonTypes) {
-			cbLessonType.addItem(lt);
-		}
-		cbLessonType.setBounds(106, 287, 292, 21);
-		tablePanel.add(cbLessonType);
-		
-		cbLessonType.addActionListener(new ActionListener() {		
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				selectedLessonType = (LessonType)cbLessonType.getSelectedItem(); 
-				
-				cbInstructor = new JComboBox<Instructor>();
-				for(Instructor curr:instructors) {
-					for(int i=0;i<curr.getInstructorAccreditations().size();i++) {
-						if(selectedLessonType.getAccreditation().getAccreditationId() == curr.getInstructorAccreditations().get(i).getAccreditationId()) {
-							cbInstructor.addItem(curr);
-						}
-					}
-				}
-				cbInstructor.setBounds(106, 344, 292, 21);
-				tablePanel.add(cbInstructor);
-			}
-		});
-		
+		cbInstructor = new JComboBox<Instructor>();
+		cbInstructor.setBounds(106, 344, 292, 21);
+		tablePanel.add(cbInstructor);
 		
 		JButton btnHome = new JButton("Accueil");
 		btnHome.addActionListener(new ActionListener() {
@@ -243,5 +252,45 @@ public class LessonsJFrame extends JFrame {
 		});
 		btnDelete.setBounds(106, 492, 89, 23);
 		tablePanel.add(btnDelete);
+		
+		JButton btnUpdate = new JButton("Modifier");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int minBook = Integer.parseInt(tfMin.getText());
+					int maxBook = Integer.parseInt(tfMax.getText());
+					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					if(cbLessonType.getSelectedItem() != null) {
+						selectedLessonType = (LessonType)cbLessonType.getSelectedItem();
+						selectedLesson.setLessonType(selectedLessonType);
+					}		
+					
+					if(cbInstructor.getSelectedItem() != null) {
+						selectedInstructor = (Instructor)cbInstructor.getSelectedItem();
+						selectedLesson.setInstructor(selectedInstructor);
+					}
+					
+					selectedLesson.setMinBookings(minBook);
+					selectedLesson.setMaxBookings(maxBook);
+					selectedLesson.setDate(date);
+					
+					if(selectedLesson.updateLesson(lessonDAO)) {
+						model.updateLesson(selectedRow, selectedLesson);
+						JOptionPane.showMessageDialog(null, "Leçon modifiée !");
+						resetFields();
+					}
+				}catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Nombre de réservations incorrect.");
+				}catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}catch (NullPointerException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+		btnUpdate.setBounds(205, 492, 89, 23);
+		tablePanel.add(btnUpdate);
 	}
 }

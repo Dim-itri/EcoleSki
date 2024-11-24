@@ -81,4 +81,18 @@ public abstract class Person {
 	public Person(String name, String surname, LocalDate dob, int phone) {
 		this(0, name, surname, dob, phone);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj != null && obj.getClass() == this.getClass() && ((Person)obj).getPersonId() == this.getPersonId()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Integer.hashCode(personId);
+	}
 }

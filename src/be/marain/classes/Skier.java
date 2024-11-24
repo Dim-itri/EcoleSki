@@ -40,4 +40,18 @@ public class Skier extends Person {
 		return "id : " + getPersonId() + " Name : " + getName() + " Surname : " + getSurname() + " DOB : "
 				+ getDateOfBirth() + " Phone : " + getPhoneNumber();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj != null && obj.getClass() == this.getClass() && ((Skier)obj).getPersonId() == getPersonId()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

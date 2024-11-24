@@ -43,7 +43,7 @@ public class Lesson {
 	}
 	
 	public boolean updateLesson(LessonDAO dao) {
-		return false;
+		return dao.update(this);
 	}
 	
 	public void setInstructor(Instructor newInstructor) throws NullPointerException{
@@ -117,5 +117,19 @@ public class Lesson {
 	@Override
 	public String toString() {
 		return "Id : " + lessonId + ", Min : " + minBookings + ", Max : " + maxBookings + ", Date : " + date.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj != null && obj.getClass() == this.getClass() && this.getLessonId() == ((Lesson)obj).getLessonId()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Integer.hashCode(lessonId);
 	}
 }

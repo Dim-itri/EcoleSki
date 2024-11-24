@@ -29,6 +29,15 @@ public class LessonTableModel extends AbstractTableModel{
 		}
 	}
 	
+	public void updateLesson(int rowIndex, Lesson updatedLesson) throws IndexOutOfBoundsException{
+		if(rowIndex >= 0  && rowIndex < lessons.size()) {
+			lessons.set(rowIndex, updatedLesson);
+			fireTableRowsUpdated(rowIndex, rowIndex);
+		}else {
+			throw new IndexOutOfBoundsException("Impossible de modifier la leçon : " + rowIndex);
+		}
+	}
+	
 	@Override
 	public int getRowCount() {
 		return lessons.size();
