@@ -1,5 +1,9 @@
 package be.marain.classes;
 
+import java.util.List;
+
+import be.marain.dao.BookingDAO;
+
 public class Booking {
 	private int bookingId;
 	private int duration;
@@ -23,6 +27,10 @@ public class Booking {
 	public Booking(int duration, int individual, Instructor instructor, Skier skier,
 			Lesson lesson, Period period) {
 		this(0, duration, individual, instructor, skier, lesson, period);
+	}
+	
+	public static List<Booking> getAllBookings(BookingDAO dao){
+		return null;
 	}
 	
 	public Skier getSkier() {
