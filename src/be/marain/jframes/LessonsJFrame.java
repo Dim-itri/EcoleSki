@@ -122,16 +122,23 @@ public class LessonsJFrame extends JFrame {
 		cbLessonType.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				selectedLessonType = (LessonType)cbLessonType.getSelectedItem(); 
-				
-				cbInstructor.removeAllItems();
-				
-				for(Instructor curr:instructors) {
-					for(int i=0;i<curr.getInstructorAccreditations().size();i++) {
-						if(selectedLessonType.getAccreditation().getAccreditationId() == curr.getInstructorAccreditations().get(i).getAccreditationId()) {
-							cbInstructor.addItem(curr);
+				try {
+					selectedLessonType = (LessonType)cbLessonType.getSelectedItem(); 
+					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					
+					cbInstructor.removeAllItems();
+					
+					
+					for(Instructor curr:instructors) {
+						for(int i=0;i<curr.getInstructorAccreditations().size();i++) {
+							if(selectedLessonType.getAccreditation().getAccreditationId() == curr.getInstructorAccreditations().get(i).getAccreditationId()
+									&& curr.isInstructorAvailable(date, lessons)) {
+								cbInstructor.addItem(curr);
+							}
 						}
 					}
+				}catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		});
@@ -143,11 +150,11 @@ public class LessonsJFrame extends JFrame {
 				selectedInstructor = selectedLesson.getInstructor();
 				selectedLessonType = selectedLesson.getLessonType();
 				
-				cbLessonType.setSelectedItem(selectedLessonType);
-				
 				tfMin.setText(String. valueOf(selectedLesson.getMinBookings()));
 				tfMax.setText(String.valueOf(selectedLesson.getMaxBookings()));
 				dclessonDate.setDate(Date.from(selectedLesson.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+				
+				cbLessonType.setSelectedItem(selectedLessonType);
 				
 				if(cbInstructor.getItemCount() > 0) {
 					cbInstructor.removeAllItems();

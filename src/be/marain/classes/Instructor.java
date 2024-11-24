@@ -29,6 +29,15 @@ public class Instructor extends Person {
 	                          getName(), getSurname(), getPersonId(), getDateOfBirth(), getPhoneNumber(), accreditationsString);
 	}
 	
+	public boolean isInstructorAvailable(LocalDate lessonTime, List<Lesson> lessons) {
+	    for (Lesson lesson : lessons) {
+	        if (lesson.getInstructor().equals(this) && lesson.getDate().equals(lessonTime)) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
+	
 	public String getDisplayName() {
 		return getName() + " " + getSurname();
 	}
