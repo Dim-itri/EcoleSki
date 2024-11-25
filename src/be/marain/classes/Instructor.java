@@ -3,7 +3,6 @@ package be.marain.classes;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Attributes.Name;
 
 import be.marain.dao.InstructorDAO;
 

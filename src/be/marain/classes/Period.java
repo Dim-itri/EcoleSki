@@ -46,4 +46,9 @@ public class Period {
 		setStartDate(start);
 		setVacation(Vacation);
 	}
+	
+	@Override
+	public String toString() {
+		return "Début : " + startDate + ", Fin : " +endDate+ ",Vacances : " + isVacation;
+	}
 }

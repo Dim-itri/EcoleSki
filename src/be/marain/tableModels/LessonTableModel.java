@@ -5,10 +5,10 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import be.marain.classes.Instructor;
 import be.marain.classes.Lesson;
 
 public class LessonTableModel extends AbstractTableModel{
+	private static final long serialVersionUID = 1L;
 	private String[] columnsName = {"Id", "Min. réservations", "Max. réservations", "Instructeur", "Type de leçon"};
 	private List<Lesson> lessons;
 	

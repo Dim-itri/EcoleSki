@@ -55,9 +55,9 @@ public class BookingDAO extends DAO<Booking> {
 			String query = "SELECT b.bookingid, b.bookingDate, b.duration, b.isindividual, "
 					+ "s.skierid, s.name AS \"skier_name\", s.surname AS \"skier_surname\", s.dateofbirth AS \"skier_dob\", s.phonenumber AS \"skier_phone\", "
 					+ "p.periodid, p.startdate, p.enddate, "
-					+ "l.lessonid, l.minbookings, l.maxbookings, l.lessondate"
+					+ "l.lessonid, l.minbookings, l.maxbookings, l.lessondate, "
 					+ "i.instructorid, i.name AS \"instructor_name\", i.surname AS \"instructor_surname\", i.phonenumber AS \"instructor_phone\", i.dateofbirth AS \"instructor_dob\", "
-					+ "lt.ltid, lt.lessonlevel, lt.price "
+					+ "lt.ltid, lt.lessonlevel, lt.price, "
 					+ "a.accreditationid, a.name AS \"accred_name\""
 					+ "FROM booking b "
 					+ "INNER JOIN period p ON p.periodid = b.periodid "
@@ -65,11 +65,11 @@ public class BookingDAO extends DAO<Booking> {
 					+ "INNER JOIN lesson l ON l.lessonid = b.lessonid "
 					+ "INNER JOIN instructor i ON i.instructorid = l.instructorid "
 					+ "INNER JOIN lessontype lt ON lt.ltid = l.ltid "
-					+ "INNER JOIN Accreditation a ON a.accreditationid = lt.accreditationid";
+					+ "INNER JOIN Accreditation a ON a.accreditationid = lt.accreditationid ";
 			
 			String accredQuery = "SELECT * FROM accreditation a "
 					+ "INNER JOIN instructoraccred ia ON ia.accreditationid = a.accreditationid "
-					+ "WHERE instructor id = ?";
+					+ "WHERE instructorid = ?";
 			
 			ResultSet res = connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(query);
 			
@@ -81,12 +81,12 @@ public class BookingDAO extends DAO<Booking> {
                 int duration = res.getInt("duration");
                 boolean isIndividual;
                 
-                if(res.getString("isindividual") == "Y") {
+                if(res.getString("isindividual").charAt(0) == 'Y') {
                 	isIndividual = true;
                 }else {
                 	isIndividual = false;
                 }
-           
+                
                 // Récupération des données de skier
                 int skierId = res.getInt("skierid");
                 String skierName = res.getString("skier_name");
@@ -116,7 +116,7 @@ public class BookingDAO extends DAO<Booking> {
                 int accredid = res.getInt("accreditationid");
                 String accredName = res.getString("accred_name");
                 
-                PreparedStatement statement = connect.prepareStatement(query);
+                PreparedStatement statement = connect.prepareStatement(accredQuery);
                 statement.setInt(1, instructorId);
                 ResultSet accredRes = statement.executeQuery();
                 
@@ -146,7 +146,7 @@ public class BookingDAO extends DAO<Booking> {
                 
                 Lesson currLesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, currInst, currLessonType);
                 
-                Skier currSkier = new Skier(skierName, skierSurname, skierDob, skierPhone);
+                Skier currSkier = new Skier(skierId, skierName, skierSurname, skierDob, skierPhone);
                 
                 Period currPeriod = new Period(periodId, startDate, endDate, true);
                 
@@ -154,11 +154,10 @@ public class BookingDAO extends DAO<Booking> {
                 
                 bookings.add(currBooking);
 			}
-			//Getting accreditations
 		}catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
-		return null;
+		return bookings;
 	}
 }

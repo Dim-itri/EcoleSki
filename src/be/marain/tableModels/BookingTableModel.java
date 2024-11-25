@@ -7,6 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import be.marain.classes.Booking;
 
 public class BookingTableModel extends AbstractTableModel{
+	private static final long serialVersionUID = 1L;
 	String[] columnNames = {"Id", "Durée", "Individuelle", "Instructeur", "Skieur", "Leçon", "Période"};
 	List<Booking> bookings;
 	
@@ -25,6 +26,11 @@ public class BookingTableModel extends AbstractTableModel{
 	public int getColumnCount() {
 		return columnNames.length;
 	}
+	
+	@Override
+	public String getColumnName(int column) {
+		return columnNames[column];
+	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
@@ -38,14 +44,12 @@ public class BookingTableModel extends AbstractTableModel{
 		case 2:
 			return booking.getIndividual();
 		case 3:
-			return booking.getInstructor();
-		case 4:
 			return booking.getInstructor().toString();
+		case 4:
+			return booking.getSkier().toString();
 		case 5:
-			 return booking.getSkier().toString();
-		case 6:
 			return booking.getLesson().toString();
-		case 7:
+		case 6:
 			return booking.getPeriod().toString();
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + columnIndex);

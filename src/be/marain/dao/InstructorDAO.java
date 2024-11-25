@@ -1,6 +1,5 @@
 package be.marain.dao;
 
-import java.lang.invoke.CallSite;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,12 +10,9 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import com.toedter.calendar.IDateEditor;
 
 import be.marain.classes.Accreditation;
-import be.marain.classes.Booking;
 import be.marain.classes.Instructor;
-import be.marain.classes.Lesson;
 
 public class InstructorDAO extends DAO<Instructor> {
 	public InstructorDAO(Connection conn) {

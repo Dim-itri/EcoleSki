@@ -1,7 +1,6 @@
 package be.marain.jframes;
 
 import java.awt.EventQueue;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -14,6 +13,9 @@ import be.marain.classes.Booking;
 import be.marain.dao.BookingDAO;
 import be.marain.dao.EcoleSkiConnection;
 import be.marain.tableModels.BookingTableModel;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class BookingsJFrame extends JFrame {
 
@@ -44,7 +46,7 @@ public class BookingsJFrame extends JFrame {
 		List<Booking> bookings = Booking.getAllBookings(bookingDAO);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1297, 769);
+		setBounds(100, 100, 1942, 769);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -52,7 +54,7 @@ public class BookingsJFrame extends JFrame {
 		contentPane.setLayout(null);
 		
 		JPanel tablePanel = new JPanel();
-		tablePanel.setBounds(5, 5, 1293, 739);
+		tablePanel.setBounds(5, 5, 1911, 725);
 		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		tablePanel.setLayout(null);
 		
@@ -61,10 +63,20 @@ public class BookingsJFrame extends JFrame {
 		JTable table = new JTable(model);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(623, 20, 650, 699);
+		scrollPane.setBounds(407, 11, 1504, 699);
 		
 		tablePanel.add(scrollPane);
 		contentPane.add(tablePanel);
+		
+		JButton btnHome = new JButton("Accueil");
+		btnHome.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Index index = new Index();		
+				index.setVisible(true);
+				dispose();
+			}
+		});
+		btnHome.setBounds(10, 687, 89, 23);
+		tablePanel.add(btnHome);
 	}
-
 }

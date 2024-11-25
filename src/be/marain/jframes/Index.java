@@ -90,6 +90,13 @@ public class Index extends JFrame {
 		contentPane.add(btnNewButton);
 
 		JButton displayBookings = new JButton("Réservations");
+		displayBookings.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				BookingsJFrame bookingsJFrame = new BookingsJFrame();
+				bookingsJFrame.setVisible(true);
+				dispose();
+			}
+		});
 		displayBookings.setFont(new Font("Tahoma", Font.BOLD, 17));
 		displayBookings.setBounds(1084, 313, 155, 49);
 		contentPane.add(displayBookings);
