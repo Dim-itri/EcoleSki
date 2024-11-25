@@ -13,7 +13,7 @@ public class Booking {
 	private Skier skier;
 	private Lesson lesson;
 	
-	public Booking(int id, int duration, int individual, Instructor instructor, Skier skier,
+	public Booking(int id, int duration, boolean individual, Instructor instructor, Skier skier,
 			Lesson lesson, Period period) {
 		setBookingId(id);
 		setDuration(duration);
@@ -24,13 +24,13 @@ public class Booking {
 		setSkier(skier);
 	}
 
-	public Booking(int duration, int individual, Instructor instructor, Skier skier,
+	public Booking(int duration, boolean individual, Instructor instructor, Skier skier,
 			Lesson lesson, Period period) {
 		this(0, duration, individual, instructor, skier, lesson, period);
 	}
 	
 	public static List<Booking> getAllBookings(BookingDAO dao){
-		return null;
+		return dao.findAll();
 	}
 	
 	public Skier getSkier() {

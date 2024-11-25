@@ -41,10 +41,10 @@ public class BookingsJFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public BookingsJFrame() {
-		List<Booking> bookings = new ArrayList<Booking>();
+		List<Booking> bookings = Booking.getAllBookings(bookingDAO);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1310, 781);
+		setBounds(100, 100, 1297, 769);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 

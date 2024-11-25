@@ -83,7 +83,7 @@ public class LessonsJFrame extends JFrame {
 		List<Instructor> instructors = Instructor.getAllInstructors(instructorDAO);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1301, 789);
+		setBounds(100, 100, 1301, 772);
 		setTitle("Leçons");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

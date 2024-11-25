@@ -73,7 +73,7 @@ public class InstructorsJFrame extends JFrame {
 	 */
 	public InstructorsJFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1299, 777);
+		setBounds(100, 100, 1299, 763);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setTitle("Instructeurs");
@@ -81,7 +81,7 @@ public class InstructorsJFrame extends JFrame {
 		setContentPane(contentPane);
 		
 		JPanel tablePanel = new JPanel();
-		tablePanel.setBounds(5, 5, 1293, 739);
+		tablePanel.setBounds(5, 5, 1293, 735);
 		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		
 		List<Instructor> instructors = Instructor.getAllInstructors(instructorDAO);

@@ -74,7 +74,7 @@ public class SkiersJFrame extends JFrame {
 	 */	
 	public SkiersJFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1317, 786);
+		setBounds(100, 100, 1300, 767);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setTitle("Skieurs");
