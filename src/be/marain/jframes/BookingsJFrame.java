@@ -10,21 +10,26 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 
 import be.marain.classes.Booking;
+import be.marain.classes.Instructor;
+import be.marain.classes.Lesson;
+import be.marain.classes.Skier;
 import be.marain.dao.BookingDAO;
 import be.marain.dao.EcoleSkiConnection;
+import be.marain.dao.LessonDAO;
+import be.marain.dao.SkierDAO;
 import be.marain.tableModels.BookingTableModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 
 public class BookingsJFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private BookingDAO bookingDAO = new BookingDAO(EcoleSkiConnection.getInstance());
+	private LessonDAO lessonDAO = new LessonDAO(EcoleSkiConnection.getInstance());
+	private SkierDAO skierDAO = new SkierDAO(EcoleSkiConnection.getInstance());
 	private JPanel contentPane;
 
 	/**
@@ -48,6 +53,8 @@ public class BookingsJFrame extends JFrame {
 	 */
 	public BookingsJFrame() {
 		List<Booking> bookings = Booking.getAllBookings(bookingDAO);
+		List<Lesson> lessons = Lesson.getAllLessons(lessonDAO);
+		List<Skier> skiers = Skier.getAllSkiers(skierDAO);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1942, 769);
@@ -83,21 +90,9 @@ public class BookingsJFrame extends JFrame {
 		btnHome.setBounds(10, 687, 89, 23);
 		tablePanel.add(btnHome);
 		
-		JLabel lblDuration = new JLabel("Durée");
-		lblDuration.setBounds(10, 157, 46, 28);
-		tablePanel.add(lblDuration);
-		
-		JLabel lblIndividual = new JLabel("Individuelle");
-		lblIndividual.setBounds(10, 123, 63, 23);
-		tablePanel.add(lblIndividual);
-		
 		JLabel lblLesson = new JLabel("Leçon");
 		lblLesson.setBounds(10, 196, 46, 14);
 		tablePanel.add(lblLesson);
-		
-		JRadioButton rdbtnIndividual = new JRadioButton("");
-		rdbtnIndividual.setBounds(94, 123, 109, 23);
-		tablePanel.add(rdbtnIndividual);
 		
 		JComboBox cbLesson = new JComboBox();
 		cbLesson.setBounds(94, 192, 109, 22);

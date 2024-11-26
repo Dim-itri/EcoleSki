@@ -1,17 +1,19 @@
 package be.marain.classes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import be.marain.dao.BookingDAO;
 
 public class Booking {
 	private int bookingId;
+	private LocalDate bookingDate;
 	private Instructor instructor;
 	private Period period;
 	private Skier skier;
 	private Lesson lesson;
 	
-	public Booking(int id, Instructor instructor, Skier skier,
+	public Booking(int id, LocalDate bookingDate, Instructor instructor, Skier skier,
 			Lesson lesson, Period period) {
 		setBookingId(id);
 		setInstructor(instructor);
@@ -20,9 +22,9 @@ public class Booking {
 		setSkier(skier);
 	}
 
-	public Booking(Instructor instructor, Skier skier,
+	public Booking(LocalDate bookingDate,Instructor instructor, Skier skier,
 			Lesson lesson, Period period) {
-		this(0, instructor, skier, lesson, period);
+		this(0, bookingDate,instructor, skier, lesson, period);
 	}
 	
 	public static List<Booking> getAllBookings(BookingDAO dao){
@@ -47,6 +49,10 @@ public class Booking {
 
 	public int getBookingId() {
 		return bookingId;
+	}
+	
+	public LocalDate getBookingDate() {
+		return bookingDate;
 	}
 
 	public void setBookingId(int bookingId) {
@@ -84,6 +90,14 @@ public class Booking {
 			this.skier = skier;
 		}else {
 			throw new NullPointerException("Aucun skieur à ajouter.");
+		}
+	}
+	
+	public void setBookingDate(LocalDate bookingDate) {
+		if(bookingDate != null) {
+			this.bookingDate = bookingDate;
+		}else {
+			throw new NullPointerException("Date invalide");
 		}
 	}
 

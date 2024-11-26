@@ -1,7 +1,6 @@
 package be.marain.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
@@ -52,10 +51,10 @@ public class BookingDAO extends DAO<Booking> {
 		try {
 			//Getting all the infos beside accreditations for the instructor
 			//to avoid multiple lines for 1 booking
-			String query = "SELECT b.bookingid, b.bookingDate, b.duration, b.isindividual, "
+			String query = "SELECT b.bookingid, b.bookingDate, "
 					+ "s.skierid, s.name AS \"skier_name\", s.surname AS \"skier_surname\", s.dateofbirth AS \"skier_dob\", s.phonenumber AS \"skier_phone\", "
 					+ "p.periodid, p.startdate, p.enddate, "
-					+ "l.lessonid, l.minbookings, l.maxbookings, l.lessondate, "
+					+ "l.lessonid, l.minbookings, l.maxbookings, l.lessondate, l.isIndividual, l.starthour, l.endhour, l.duration, "
 					+ "i.instructorid, i.name AS \"instructor_name\", i.surname AS \"instructor_surname\", i.phonenumber AS \"instructor_phone\", i.dateofbirth AS \"instructor_dob\", "
 					+ "lt.ltid, lt.lessonlevel, lt.price, "
 					+ "a.accreditationid, a.name AS \"accred_name\""
@@ -77,15 +76,7 @@ public class BookingDAO extends DAO<Booking> {
 			while(res.next()) {
 				// Récupération des données de booking
                 int bookingId = res.getInt("bookingid");
-                Date bookingDate = res.getDate("bookingDate");
-                int duration = res.getInt("duration");
-                boolean isIndividual;
-                
-                if(res.getString("isindividual").charAt(0) == 'Y') {
-                	isIndividual = true;
-                }else {
-                	isIndividual = false;
-                }
+                LocalDate bookingDate = res.getDate("bookingDate").toLocalDate();
                 
                 // Récupération des données de skier
                 int skierId = res.getInt("skierid");
@@ -104,6 +95,17 @@ public class BookingDAO extends DAO<Booking> {
                 int minBookings = res.getInt("minbookings");
                 int maxBookings = res.getInt("maxbookings");
                 LocalDate lessonDate = res.getDate("lessondate").toLocalDate();
+                int startHour = res.getInt("starthour");
+                int endHour = res.getInt("endhour");
+                int duration = res.getInt("duration");
+                boolean isIndividual;
+                
+                if(res.getString("isindividual").charAt(0) == 'Y') {
+                	isIndividual = true;
+                }else {
+                	isIndividual = false;
+                }
+
 
                 // Récupération des données de instructor
                 int instructorId = res.getInt("instructorid");
@@ -144,14 +146,14 @@ public class BookingDAO extends DAO<Booking> {
                 
                 LessonType currLessonType = new LessonType(lessonTypeId, lessonLevel, price, new Accreditation(accredid, accredName));
                 
-                Lesson currLesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, currInst, currLessonType);
+                Lesson currLesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, currInst, currLessonType, isIndividual, startHour, endHour, duration);
                 
                 Skier currSkier = new Skier(skierId, skierName, skierSurname, skierDob, skierPhone);
                 
                 Period currPeriod = new Period(periodId, startDate, endDate, true);
                 
-                Booking currBooking = new Booking(bookingId ,duration, isIndividual, currInst, currSkier, currLesson, currPeriod);
-                
+                Booking currBooking = new Booking(bookingId , bookingDate, currInst, currSkier, currLesson, currPeriod);
+                 
                 bookings.add(currBooking);
 			}
 		}catch (Exception e) {
