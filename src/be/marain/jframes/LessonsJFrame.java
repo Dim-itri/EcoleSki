@@ -23,6 +23,7 @@ import be.marain.dao.InstructorDAO;
 import be.marain.dao.LessonDAO;
 import be.marain.dao.LessonTypeDAO;
 import be.marain.tableModels.LessonTableModel;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -30,6 +31,7 @@ import com.toedter.calendar.JDateChooser;
 
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 
 public class LessonsJFrame extends JFrame {
 
@@ -47,6 +49,9 @@ public class LessonsJFrame extends JFrame {
 	private Lesson selectedLesson;
 	private int selectedRow;
 	private JDateChooser dclessonDate;
+	private JTextField tfStartHour;
+	private JTextField tfEndHour;
+	private JCheckBox chckbxIsIndividual;
 
 	/**
 	 * Launch the application.
@@ -83,7 +88,7 @@ public class LessonsJFrame extends JFrame {
 		List<Instructor> instructors = Instructor.getAllInstructors(instructorDAO);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1301, 772);
+		setBounds(100, 100, 1690, 784);
 		setTitle("Leçons");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -91,7 +96,7 @@ public class LessonsJFrame extends JFrame {
 		setContentPane(contentPane);
 
 		JPanel tablePanel = new JPanel();
-		tablePanel.setBounds(5, 5, 1293, 739);
+		tablePanel.setBounds(5, 5, 1659, 739);	
 		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		
 		LessonTableModel model = new LessonTableModel(lessons);
@@ -107,7 +112,7 @@ public class LessonsJFrame extends JFrame {
 		tablePanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(473, 20, 800, 699);
+		scrollPane.setBounds(408, 11, 1243, 699);
 		scrollPane.setPreferredSize(new Dimension(800, 600));
 		tablePanel.add(scrollPane);
 		contentPane.add(tablePanel);
@@ -116,7 +121,7 @@ public class LessonsJFrame extends JFrame {
 		for(LessonType lt:lessonTypes) {
 			cbLessonType.addItem(lt);
 		}
-		cbLessonType.setBounds(106, 287, 292, 21);
+		cbLessonType.setBounds(106, 377, 292, 21);
 		tablePanel.add(cbLessonType);
 		
 		cbLessonType.addActionListener(new ActionListener() {		
@@ -125,6 +130,9 @@ public class LessonsJFrame extends JFrame {
 				try {
 					selectedLessonType = (LessonType)cbLessonType.getSelectedItem(); 
 					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					int startHour = Integer.parseInt(tfStartHour.getText());
+					int endHour = Integer.parseInt(tfEndHour.getText());
+					
 					
 					cbInstructor.removeAllItems();
 					
@@ -132,12 +140,18 @@ public class LessonsJFrame extends JFrame {
 					for(Instructor curr:instructors) {
 						for(int i=0;i<curr.getInstructorAccreditations().size();i++) {
 							if(selectedLessonType.getAccreditation().getAccreditationId() == curr.getInstructorAccreditations().get(i).getAccreditationId()
-									&& curr.isInstructorAvailable(date, lessons)) {
+									&& curr.isInstructorAvailable(date, lessons, startHour, endHour)) {
 								cbInstructor.addItem(curr);
 							}
 						}
 					}
-				}catch (Exception ex) {
+				}catch (NullPointerException ex) {
+					JOptionPane.showMessageDialog(null, "Veuillez choisir une date.");
+				}
+				catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner une heure de début et de fin.");
+				}
+				catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
@@ -153,6 +167,9 @@ public class LessonsJFrame extends JFrame {
 				tfMin.setText(String. valueOf(selectedLesson.getMinBookings()));
 				tfMax.setText(String.valueOf(selectedLesson.getMaxBookings()));
 				dclessonDate.setDate(Date.from(selectedLesson.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+				tfStartHour.setText(String.valueOf(selectedLesson.getStartHour()));
+				tfEndHour.setText(String.valueOf(selectedLesson.getEndHour()));
+				chckbxIsIndividual.setSelected(selectedLesson.getIsIndividual());
 				
 				cbLessonType.setSelectedItem(selectedLessonType);
 				
@@ -175,11 +192,11 @@ public class LessonsJFrame extends JFrame {
 		tablePanel.add(lblDate);
 		
 		JLabel lblInstructor = new JLabel("Instructeur");
-		lblInstructor.setBounds(10, 347, 86, 24);
+		lblInstructor.setBounds(10, 410, 86, 24);
 		tablePanel.add(lblInstructor);
 		
 		JLabel lblLessonType = new JLabel("Type");
-		lblLessonType.setBounds(10, 285, 86, 24);
+		lblLessonType.setBounds(10, 375, 86, 24);
 		tablePanel.add(lblLessonType);
 		
 		tfMin = new JTextField();
@@ -197,8 +214,34 @@ public class LessonsJFrame extends JFrame {
 		tablePanel.add(dclessonDate);
 		
 		cbInstructor = new JComboBox<Instructor>();
-		cbInstructor.setBounds(106, 344, 292, 21);
+		cbInstructor.setBounds(106, 412, 292, 21);
 		tablePanel.add(cbInstructor);
+		
+		JLabel lblIndividual = new JLabel("Individuelle");
+		lblIndividual.setBounds(10, 265, 70, 21);
+		tablePanel.add(lblIndividual);
+		
+		JLabel lblstartHour = new JLabel("Heure de début");
+		lblstartHour.setBounds(10, 315, 86, 14);
+		tablePanel.add(lblstartHour);
+		
+		JLabel lblendHour = new JLabel("Heure de fin");
+		lblendHour.setBounds(10, 350, 86, 14);
+		tablePanel.add(lblendHour);
+		
+		tfStartHour = new JTextField();
+		tfStartHour.setBounds(106, 312, 86, 20);
+		tablePanel.add(tfStartHour);
+		tfStartHour.setColumns(10);
+		
+		tfEndHour = new JTextField();
+		tfEndHour.setBounds(106, 347, 86, 20);
+		tablePanel.add(tfEndHour);
+		tfEndHour.setColumns(10);
+		
+		chckbxIsIndividual = new JCheckBox("");
+		chckbxIsIndividual.setBounds(105, 264, 97, 23);
+		tablePanel.add(chckbxIsIndividual);
 		
 		JButton btnHome = new JButton("Accueil");
 		btnHome.addActionListener(new ActionListener() {
@@ -219,8 +262,14 @@ public class LessonsJFrame extends JFrame {
 					int maxBook = Integer.parseInt(tfMax.getText());
 					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					selectedInstructor = (Instructor)cbInstructor.getSelectedItem();
+					int startHour = Integer.parseInt(tfStartHour.getText());
+					int endHour = Integer.parseInt(tfEndHour.getText());
+					boolean isIndividual = chckbxIsIndividual.isSelected();
+					int duration = endHour - startHour;
+							
+					System.out.println(duration);
 					
-					Lesson newLesson = new Lesson(minBook, maxBook, date, selectedInstructor, selectedLessonType);
+					Lesson newLesson = new Lesson(minBook, maxBook, date, selectedInstructor, selectedLessonType, isIndividual, startHour, endHour, duration);
 					
 					if(newLesson.addLesson(lessonDAO)) {
 						model.addLesson(newLesson);
@@ -266,6 +315,10 @@ public class LessonsJFrame extends JFrame {
 				try {
 					int minBook = Integer.parseInt(tfMin.getText());
 					int maxBook = Integer.parseInt(tfMax.getText());
+					int startHour = Integer.parseInt(tfStartHour.getText());
+					int endHour = Integer.parseInt(tfEndHour.getText());
+					boolean isIndividual = chckbxIsIndividual.isSelected();
+					int duration = endHour - startHour;
 					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					if(cbLessonType.getSelectedItem() != null) {
 						selectedLessonType = (LessonType)cbLessonType.getSelectedItem();
@@ -277,6 +330,10 @@ public class LessonsJFrame extends JFrame {
 						selectedLesson.setInstructor(selectedInstructor);
 					}
 					
+					selectedLesson.setStartHour(startHour);
+					selectedLesson.setEndHour(endHour);
+					selectedLesson.setDuration(duration);
+					selectedLesson.setIndividual(isIndividual);
 					selectedLesson.setMinBookings(minBook);
 					selectedLesson.setMaxBookings(maxBook);
 					selectedLesson.setDate(date);

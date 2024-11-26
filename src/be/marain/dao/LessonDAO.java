@@ -26,7 +26,7 @@ public class LessonDAO extends DAO<Lesson> {
 		
 		try {
 			String[] returnCols = {"lessonid"};
-			String query = "INSERT INTO lesson (minbookings, maxbookings, instructorid, ltid, lessondate) VALUES(?, ?, ?, ?, ?)";
+			String query = "INSERT INTO lesson (minbookings, maxbookings, instructorid, ltid, lessondate, starthour, endhour, isindividual, duration) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			PreparedStatement statement = connect.prepareStatement(query, returnCols);
 			
 			statement.setInt(1, lesson.getMinBookings());
@@ -34,6 +34,16 @@ public class LessonDAO extends DAO<Lesson> {
 			statement.setInt(3, lesson.getInstructor().getPersonId());
 			statement.setInt(4, lesson.getLessonType().getLtId());
 			statement.setDate(5, java.sql.Date.valueOf(lesson.getDate()));
+			statement.setInt(6, lesson.getStartHour());
+			statement.setInt(7, lesson.getEndHour());
+			
+			if (lesson.getIsIndividual() == true) {
+				statement.setString(8, "Y");
+			}else {
+				statement.setString(8, "N");
+			}
+			
+			statement.setInt(9, lesson.getDuration());
 			
 			success = statement.executeUpdate() > 0;
 			
@@ -111,7 +121,7 @@ public class LessonDAO extends DAO<Lesson> {
 		List<Lesson> lessons = new ArrayList<Lesson>();
 		
 		try {
-			String query = "SELECT l.lessonId, l.minBookings, l.maxBookings, l.lessonDate, " +
+			String query = "SELECT l.lessonId, l.minBookings, l.maxBookings, l.lessonDate, l.starthour, l.endhour, l.duration, l.isindividual, " +
                     "i.instructorId, i.name, i.surname, i.dateofbirth, i.phonenumber, " +
                     "lt.ltId, lt.lessonlevel, lt.price, " +
                     "a.accreditationid, a.name AS \"nameAccred\"" +
@@ -129,6 +139,16 @@ public class LessonDAO extends DAO<Lesson> {
                 int minBookings = resultSet.getInt("minBookings");
                 int maxBookings = resultSet.getInt("maxBookings");
                 LocalDate lessonDate = resultSet.getDate("lessonDate").toLocalDate();
+                int startHour = resultSet.getInt("starthour");
+                int endHour = resultSet.getInt("endhour");
+                int duration = resultSet.getInt("duration");
+                boolean isIndividual;
+                
+                if(resultSet.getString("isindividual").charAt(0) == 'Y') {
+                	isIndividual = true;
+                }else {
+                	isIndividual = false;
+                }
 
                 // Récupération des données de la table Instructor
                 int instructorId = resultSet.getInt("instructorId");
@@ -153,7 +173,7 @@ public class LessonDAO extends DAO<Lesson> {
                                                         instructorDob.toLocalDate(), instructorPhone, accreditation);
                      
                 // Création de la leçon
-                Lesson lesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, instructor, lessonType);
+                Lesson lesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, instructor, lessonType, isIndividual, startHour, endHour, duration);
 
                 // Ajout de la leçon à la liste
                 lessons.add(lesson);

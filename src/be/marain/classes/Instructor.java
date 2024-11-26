@@ -28,10 +28,12 @@ public class Instructor extends Person {
 	                          getName(), getSurname(), getPersonId(), getDateOfBirth(), getPhoneNumber(), accreditationsString);
 	}
 	
-	public boolean isInstructorAvailable(LocalDate lessonTime, List<Lesson> lessons) {
+	public boolean isInstructorAvailable(LocalDate lessonTime, List<Lesson> lessons, int startHour, int endHour) {
 	    for (Lesson lesson : lessons) {
 	        if (lesson.getInstructor().equals(this) && lesson.getDate().equals(lessonTime)) {
-	            return false;
+	            if (startHour < lesson.getEndHour() && endHour > lesson.getStartHour()) {
+	                return false;
+	            }
 	        }
 	    }
 	    return true;

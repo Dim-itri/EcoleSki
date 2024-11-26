@@ -6,27 +6,23 @@ import be.marain.dao.BookingDAO;
 
 public class Booking {
 	private int bookingId;
-	private int duration;
-	private boolean isIndividual;
 	private Instructor instructor;
 	private Period period;
 	private Skier skier;
 	private Lesson lesson;
 	
-	public Booking(int id, int duration, boolean individual, Instructor instructor, Skier skier,
+	public Booking(int id, Instructor instructor, Skier skier,
 			Lesson lesson, Period period) {
 		setBookingId(id);
-		setDuration(duration);
-		setIndividual(isIndividual);	
 		setInstructor(instructor);
 		setLesson(lesson);
 		setPeriod(period);
 		setSkier(skier);
 	}
 
-	public Booking(int duration, boolean individual, Instructor instructor, Skier skier,
+	public Booking(Instructor instructor, Skier skier,
 			Lesson lesson, Period period) {
-		this(0, duration, individual, instructor, skier, lesson, period);
+		this(0, instructor, skier, lesson, period);
 	}
 	
 	public static List<Booking> getAllBookings(BookingDAO dao){
@@ -53,23 +49,9 @@ public class Booking {
 		return bookingId;
 	}
 
-	public int getDuration() {
-		return duration;
-	}
-
-	public boolean getIndividual() {
-		return isIndividual;
-	}
-
 	public void setBookingId(int bookingId) {
 		if(bookingId >= 0) {
 			this.bookingId = bookingId;
-		}
-	}
-
-	public void setDuration(int duration) {
-		if(duration > 0) {
-			this.duration = duration;
 		}
 	}
 	
@@ -105,13 +87,9 @@ public class Booking {
 		}
 	}
 
-	public void setIndividual(boolean isIndividual) {
-		this.isIndividual = isIndividual;
-	}
-	
 	@Override
 	public String toString() {
-		return "Id : " + bookingId + ", Durée : " + duration + ", Individuel : " + isIndividual;
+		return "Id : " + bookingId;
 	}
 	
 	@Override

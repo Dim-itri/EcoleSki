@@ -16,6 +16,10 @@ import be.marain.tableModels.BookingTableModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JRadioButton;
+import javax.swing.JComboBox;
 
 public class BookingsJFrame extends JFrame {
 
@@ -78,5 +82,37 @@ public class BookingsJFrame extends JFrame {
 		});
 		btnHome.setBounds(10, 687, 89, 23);
 		tablePanel.add(btnHome);
+		
+		JLabel lblDuration = new JLabel("Durée");
+		lblDuration.setBounds(10, 157, 46, 28);
+		tablePanel.add(lblDuration);
+		
+		JLabel lblIndividual = new JLabel("Individuelle");
+		lblIndividual.setBounds(10, 123, 63, 23);
+		tablePanel.add(lblIndividual);
+		
+		JLabel lblLesson = new JLabel("Leçon");
+		lblLesson.setBounds(10, 196, 46, 14);
+		tablePanel.add(lblLesson);
+		
+		JRadioButton rdbtnIndividual = new JRadioButton("");
+		rdbtnIndividual.setBounds(94, 123, 109, 23);
+		tablePanel.add(rdbtnIndividual);
+		
+		JComboBox cbLesson = new JComboBox();
+		cbLesson.setBounds(94, 192, 109, 22);
+		tablePanel.add(cbLesson);
+		
+		JButton btnCreate = new JButton("Créer");
+		btnCreate.setBounds(10, 335, 89, 23);
+		tablePanel.add(btnCreate);
+		
+		JLabel lblSkier = new JLabel("Skieur");
+		lblSkier.setBounds(10, 239, 46, 14);
+		tablePanel.add(lblSkier);
+		
+		JComboBox cbSkier = new JComboBox();
+		cbSkier.setBounds(94, 235, 109, 22);
+		tablePanel.add(cbSkier);
 	}
 }

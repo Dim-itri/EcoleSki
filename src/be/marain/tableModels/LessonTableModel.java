@@ -9,7 +9,7 @@ import be.marain.classes.Lesson;
 
 public class LessonTableModel extends AbstractTableModel{
 	private static final long serialVersionUID = 1L;
-	private String[] columnsName = {"Id", "Min. réservations", "Max. réservations", "Instructeur", "Type de leçon"};
+	private String[] columnsName = {"Id", "Min. réservations", "Max. réservations", "Instructeur", "Type de leçon", "Début", "Fin", "Individuelle", "Durée"};
 	private List<Lesson> lessons;
 	
 	public LessonTableModel(List<Lesson> lessons) {
@@ -81,6 +81,14 @@ public class LessonTableModel extends AbstractTableModel{
 			return lesson.getInstructor().getName() + " " + lesson.getInstructor().getSurname();
 		case 4:	
 			return lesson.getLessonType().toString();
+		case 5:
+			return lesson.getStartHour();
+		case 6:
+			return lesson.getEndHour();
+		case 7:
+			return lesson.getIsIndividual();
+		case 8:
+			return lesson.getDuration();
 		default:
 			return null;
 		}

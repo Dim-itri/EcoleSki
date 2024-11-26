@@ -13,19 +13,27 @@ public class Lesson {
 	private LocalDate date;
 	private Instructor instructor;
 	private LessonType lessonType;
+	private int startHour;
+	private int endHour;
+	private boolean isIndividual;
+	private int duration;
 	private static final String dateRegEx = "^(19[0-9]{2}|20[0-9]{2})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
 	
-	public Lesson(int id, int min, int max, LocalDate date, Instructor instructor, LessonType lessonType) {
+	public Lesson(int id, int min, int max, LocalDate date, Instructor instructor, LessonType lessonType, boolean individual, int startHour, int endHour, int duration) {
 		setLessonId(id);
 		setMaxBookings(max);
 		setMinBookings(min);
 		setInstructor(instructor);
 		setLessonType(lessonType);
 		setDate(date);
+		setIndividual(individual);
+		setStartHour(startHour);
+		setEndHour(endHour);
+		setDuration(duration);
 	}
 
-	public Lesson(int min, int max, LocalDate date, Instructor instructor, LessonType lessonType) {
-		this(0, min, max, date, instructor, lessonType);
+	public Lesson(int min, int max, LocalDate date, Instructor instructor, LessonType lessonType, boolean individual, int startHour, int endHour, int duration) {
+		this(0, min, max, date, instructor, lessonType, individual, startHour, endHour, duration);
 	}
 	
 	public static List<Lesson> getAllLessons(LessonDAO dao) {
@@ -89,6 +97,30 @@ public class Lesson {
 			throw new IllegalArgumentException("Minimum invalide.");
 		}
 	}
+	
+	public void setDuration(int duration) {
+		if(duration > 0) {
+			this.duration = duration;
+		}else {
+			throw new IllegalArgumentException("Durée invalide.");
+		}
+	}
+	
+	public void setEndHour(int endHour) {
+		if(endHour >= startHour) {
+			this.endHour = endHour;
+		}else {
+			throw new IllegalArgumentException("Heure de fin invalide.");
+		}
+	}
+	
+	public void setIndividual(boolean isIndividual) {
+		this.isIndividual = isIndividual;
+	}
+	
+	public void setStartHour(int startHour) {
+			this.startHour = startHour;			
+	}
 
 	public LocalDate getDate() {
 		return date;
@@ -112,6 +144,22 @@ public class Lesson {
 	
 	public LessonType getLessonType() {
 		return lessonType;
+	}
+	
+	public int getDuration() {
+		return duration;
+	}
+	
+	public int getEndHour() {
+		return endHour;
+	}
+	
+	public int getStartHour() {
+		return startHour;
+	}
+	
+	public boolean getIsIndividual() {
+		return isIndividual;
 	}
 	
 	@Override
