@@ -57,7 +57,13 @@ public class Instructor extends Person {
 		return accreditations;
 	}
 
-	public boolean isAccreditate() {
+	public boolean isAccreditate(LessonType lessonType) {
+		for(int i = 0 ;i<accreditations.size();i++) {
+			if(lessonType.getAccreditation().equals(accreditations.get(i))) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 

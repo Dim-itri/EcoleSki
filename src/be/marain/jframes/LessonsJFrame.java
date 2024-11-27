@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableColumn;
 
 import be.marain.classes.Instructor;
 import be.marain.classes.Lesson;
@@ -88,7 +89,7 @@ public class LessonsJFrame extends JFrame {
 		List<Instructor> instructors = Instructor.getAllInstructors(instructorDAO);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1690, 784);
+		setBounds(100, 100, 1542, 784);
 		setTitle("Leçons");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -110,12 +111,20 @@ public class LessonsJFrame extends JFrame {
 		table.getColumnModel().getColumn(3).setPreferredWidth(50);
 		table.getColumnModel().getColumn(4).setPreferredWidth(50);
 		tablePanel.setLayout(null);
+		table.setFillsViewportHeight(true);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(408, 11, 1243, 699);
+		scrollPane.setBounds(408, 10, 1075, 699);
 		scrollPane.setPreferredSize(new Dimension(800, 600));
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		tablePanel.add(scrollPane);
 		contentPane.add(tablePanel);
+		
+		for (int column = 0; column < table.getColumnCount(); column++) {
+		    TableColumn tableColumn = table.getColumnModel().getColumn(column);
+		    tableColumn.setPreferredWidth(150); // Largeur par défaut de chaque colonne
+		}
 		
 		cbLessonType = new JComboBox<LessonType>();
 		for(LessonType lt:lessonTypes) {
@@ -133,17 +142,13 @@ public class LessonsJFrame extends JFrame {
 					int startHour = Integer.parseInt(tfStartHour.getText());
 					int endHour = Integer.parseInt(tfEndHour.getText());
 					
-					
 					cbInstructor.removeAllItems();
 					
-					
 					for(Instructor curr:instructors) {
-						for(int i=0;i<curr.getInstructorAccreditations().size();i++) {
-							if(selectedLessonType.getAccreditation().getAccreditationId() == curr.getInstructorAccreditations().get(i).getAccreditationId()
+							if(curr.isAccreditate(selectedLessonType)
 									&& curr.isInstructorAvailable(date, lessons, startHour, endHour)) {
 								cbInstructor.addItem(curr);
 							}
-						}
 					}
 				}catch (NullPointerException ex) {
 					JOptionPane.showMessageDialog(null, "Veuillez choisir une date.");

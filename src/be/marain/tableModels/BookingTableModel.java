@@ -40,9 +40,9 @@ public class BookingTableModel extends AbstractTableModel{
 		case 0: 
 			return booking.getBookingId();
 		case 1:
-			return booking.getInstructor().toString();
+			return booking.getBookingDate().toString();
 		case 2:
-			return booking.getBookingDate();
+			return booking.getInstructor().toString();
 		case 3:
 			return booking.getSkier().toString();
 		case 4:

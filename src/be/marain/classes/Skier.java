@@ -14,6 +14,10 @@ public class Skier extends Person {
 	public Skier(String name, String surname, LocalDate dob, int phone) {
 		this(0, name, surname, dob, phone);
 	}
+	
+	public boolean isAvailable() {
+		return false;
+	}
 
 	public boolean createSkier(SkierDAO dao) {
 		return dao.create(this);

@@ -153,7 +153,7 @@ public class BookingDAO extends DAO<Booking> {
                 Period currPeriod = new Period(periodId, startDate, endDate, true);
                 
                 Booking currBooking = new Booking(bookingId , bookingDate, currInst, currSkier, currLesson, currPeriod);
-                 
+                
                 bookings.add(currBooking);
 			}
 		}catch (Exception e) {

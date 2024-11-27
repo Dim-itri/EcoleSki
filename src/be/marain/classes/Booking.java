@@ -16,6 +16,7 @@ public class Booking {
 	public Booking(int id, LocalDate bookingDate, Instructor instructor, Skier skier,
 			Lesson lesson, Period period) {
 		setBookingId(id);
+		setBookingDate(bookingDate);
 		setInstructor(instructor);
 		setLesson(lesson);
 		setPeriod(period);
