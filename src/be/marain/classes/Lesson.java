@@ -1,8 +1,10 @@
 package be.marain.classes;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
 
 import be.marain.dao.LessonDAO;
 
@@ -13,6 +15,7 @@ public class Lesson {
 	private LocalDate date;
 	private Instructor instructor;
 	private LessonType lessonType;
+	private List<Booking> bookings;
 	private int startHour;
 	private int endHour;
 	private boolean isIndividual;
@@ -20,6 +23,7 @@ public class Lesson {
 	private static final String dateRegEx = "^(19[0-9]{2}|20[0-9]{2})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
 	
 	public Lesson(int id, int min, int max, LocalDate date, Instructor instructor, LessonType lessonType, boolean individual, int startHour, int endHour, int duration) {
+		bookings = new ArrayList<Booking>();
 		setLessonId(id);
 		setMaxBookings(max);
 		setMinBookings(min);
@@ -36,8 +40,18 @@ public class Lesson {
 		this(0, min, max, date, instructor, lessonType, individual, startHour, endHour, duration);
 	}
 	
+	public boolean isFull() {
+		return bookings.size() >= maxBookings;
+	}
+	
 	public static List<Lesson> getAllLessons(LessonDAO dao) {
 		return dao.findAll();
+	}
+	
+	public void addBooking(Booking booking) {
+		if(booking != null) {
+			bookings.add(booking);
+		}
 	}
 	
 	public boolean addLesson(LessonDAO dao) {
@@ -71,7 +85,7 @@ public class Lesson {
 	}
 
 	public void setDate(LocalDate date) {
-		if (Pattern.matches(dateRegEx, date.toString())) {
+		if (Pattern.matches(dateRegEx, date.toString()) && date.isAfter(LocalDate.now())) {
 			this.date = date;
 		}else {
 			throw new IllegalArgumentException("Date invalide.");
@@ -121,7 +135,7 @@ public class Lesson {
 	public void setStartHour(int startHour) {
 			this.startHour = startHour;			
 	}
-
+	
 	public LocalDate getDate() {
 		return date;
 	}
@@ -160,6 +174,10 @@ public class Lesson {
 	
 	public boolean getIsIndividual() {
 		return isIndividual;
+	}
+	
+	public List<Booking> getBookings() {
+		return bookings;
 	}
 	
 	@Override

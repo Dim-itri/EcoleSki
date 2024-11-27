@@ -50,8 +50,8 @@ public class LessonsJFrame extends JFrame {
 	private Lesson selectedLesson;
 	private int selectedRow;
 	private JDateChooser dclessonDate;
-	private JTextField tfStartHour;
 	private JTextField tfEndHour;
+	private JTextField tfStartHour;
 	private JCheckBox chckbxIsIndividual;
 
 	/**

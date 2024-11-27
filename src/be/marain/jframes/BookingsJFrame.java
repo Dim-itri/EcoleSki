@@ -1,6 +1,7 @@
 package be.marain.jframes;
 
 import java.awt.EventQueue;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -12,6 +13,7 @@ import javax.swing.table.TableColumn;
 
 import be.marain.classes.Booking;
 import be.marain.classes.Lesson;
+import be.marain.classes.Period;
 import be.marain.classes.Skier;
 import be.marain.dao.BookingDAO;
 import be.marain.dao.EcoleSkiConnection;
@@ -19,10 +21,13 @@ import be.marain.dao.LessonDAO;
 import be.marain.dao.PeriodDAO;
 import be.marain.dao.SkierDAO;
 import be.marain.tableModels.BookingTableModel;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 
@@ -34,6 +39,11 @@ public class BookingsJFrame extends JFrame {
 	private SkierDAO skierDAO = new SkierDAO(EcoleSkiConnection.getInstance());
 	private PeriodDAO periodDAO = new PeriodDAO(EcoleSkiConnection.getInstance());
 	private JPanel contentPane;
+	private Skier selectedSkier;
+	private Lesson selectedLesson;
+	JCheckBox chckbxInsurance;
+	JComboBox cbSkier;
+	JComboBox cbLesson;
 
 	/**
 	 * Launch the application.
@@ -50,6 +60,13 @@ public class BookingsJFrame extends JFrame {
 			}
 		});
 	}
+	
+	public void resetFields() {
+		selectedLesson = null;
+		selectedSkier = null;
+		cbLesson.removeAllItems();
+		chckbxInsurance.setSelected(false);
+	}
 
 	/**
 	 * Create the frame.
@@ -58,6 +75,7 @@ public class BookingsJFrame extends JFrame {
 		List<Booking> bookings = Booking.getAllBookings(bookingDAO);
 		List<Lesson> lessons = Lesson.getAllLessons(lessonDAO);
 		List<Skier> skiers = Skier.getAllSkiers(skierDAO);
+		List<Period> periods = Period.getAllPeriods(periodDAO);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1498, 769);
@@ -86,7 +104,7 @@ public class BookingsJFrame extends JFrame {
 		
 		for (int column = 0; column < table.getColumnCount(); column++) {
 		    TableColumn tableColumn = table.getColumnModel().getColumn(column);
-		    tableColumn.setPreferredWidth(300); // Largeur par défaut de chaque colonne
+		    tableColumn.setPreferredWidth(300);
 		}	
 		
 		JButton btnHome = new JButton("Accueil");
@@ -101,31 +119,82 @@ public class BookingsJFrame extends JFrame {
 		tablePanel.add(btnHome);
 		
 		JLabel lblLesson = new JLabel("Leçon");
-		lblLesson.setBounds(10, 196, 46, 14);
+		lblLesson.setBounds(10, 224, 46, 14);
 		tablePanel.add(lblLesson);
 		
-		JComboBox cbLesson = new JComboBox();
-		cbLesson.setBounds(94, 192, 109, 22);
+		chckbxInsurance = new JCheckBox("");
+		chckbxInsurance.setBounds(94, 159, 93, 21);
+		tablePanel.add(chckbxInsurance);
+		
+		cbLesson = new JComboBox();
+		cbLesson.setBounds(94, 220, 257, 22);
 		tablePanel.add(cbLesson);
 		
+		cbLesson.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				selectedLesson = (Lesson)cbLesson.getSelectedItem();
+			}
+		});
+		
+		cbSkier = new JComboBox();
+		for(int i=0;i<skiers.size();i++) {
+			cbSkier.addItem(skiers.get(i));
+		}
+		cbSkier.setBounds(94, 191, 257, 22);
+		tablePanel.add(cbSkier);
+		
+		cbSkier.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				selectedSkier = (Skier)cbSkier.getSelectedItem();
+				
+				for(Lesson curr:lessons) {
+					if(selectedSkier.isOldEnough(curr) && !curr.isFull()) {
+						cbLesson.addItem(curr);
+					}
+				}
+			}
+		});
+		
 		JButton btnCreate = new JButton("Créer");
+		btnCreate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Period period = null;
+				
+				System.out.println(periods.size());
+				
+				for(Period currPeriod:periods) {
+					if (selectedLesson.getDate().isAfter(currPeriod.getStartDate()) && selectedLesson.getDate().isBefore(currPeriod.getEndDate())) {
+						period = currPeriod;
+					}
+				}
+				
+				try {
+					Booking newBooking = new Booking(LocalDate.now(), selectedLesson.getInstructor(), selectedSkier, selectedLesson, period, chckbxInsurance.isSelected());
+					
+					selectedLesson.addBooking(newBooking);
+					
+					if(newBooking.createBooking(bookingDAO)) {
+						model.addBooking(newBooking);
+						JOptionPane.showMessageDialog(null, "Réservation créée !");
+						resetFields();
+					}
+				}catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}
+				
+			}
+		});
 		btnCreate.setBounds(10, 335, 89, 23);
 		tablePanel.add(btnCreate);
 		
 		JLabel lblSkier = new JLabel("Skieur");
-		lblSkier.setBounds(10, 239, 46, 14);
+		lblSkier.setBounds(10, 195, 46, 14);
 		tablePanel.add(lblSkier);
 		
-		JComboBox cbSkier = new JComboBox();
-		cbSkier.setBounds(94, 235, 109, 22);
-		tablePanel.add(cbSkier);
-		
 		JLabel lblInsurance = new JLabel("Assurance");
-		lblInsurance.setBounds(10, 159, 58, 13);
+		lblInsurance.setBounds(10, 159, 78, 13);
 		tablePanel.add(lblInsurance);
-		
-		JCheckBox chckbxInsurance = new JCheckBox("");
-		chckbxInsurance.setBounds(94, 155, 93, 21);
-		tablePanel.add(chckbxInsurance);
 	}
 }

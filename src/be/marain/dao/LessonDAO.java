@@ -1,5 +1,6 @@
 package be.marain.dao;
 
+import java.nio.channels.SelectableChannel;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -11,9 +12,12 @@ import java.util.List;
 
 
 import be.marain.classes.Accreditation;
+import be.marain.classes.Booking;
 import be.marain.classes.Instructor;
 import be.marain.classes.Lesson;
 import be.marain.classes.LessonType;
+import be.marain.classes.Period;
+import be.marain.classes.Skier;
 
 public class LessonDAO extends DAO<Lesson> {
 	public LessonDAO(Connection conn) {
@@ -123,12 +127,21 @@ public class LessonDAO extends DAO<Lesson> {
 		try {
 			String query = "SELECT l.lessonId, l.minBookings, l.maxBookings, l.lessonDate, l.starthour, l.endhour, l.duration, l.isindividual, " +
                     "i.instructorId, i.name, i.surname, i.dateofbirth, i.phonenumber, " +
-                    "lt.ltId, lt.lessonlevel, lt.price, " +
+                    "lt.ltId, lt.lessonlevel, lt.price, lt.minage, lt.maxage, " +
                     "a.accreditationid, a.name AS \"nameAccred\"" +
                     "FROM Lesson l " +
                     "INNER JOIN Instructor i ON l.instructorId = i.instructorId " +
                     "INNER JOIN LessonType lt ON l.ltId = lt.ltId " +
                     "INNER JOIN accreditation a ON lt.accreditationid = a.accreditationid";
+			
+			String bookingQuery = "SELECT b.bookingid, b.bookingdate, b.isinsured, "
+					+ "s.skierid, s.name, s.surname, s.dateofbirth, s.phonenumber, "
+					+ "p.periodid, p.startdate, p.enddate, p.isVacation "
+					+ "FROM booking b "
+					+ "INNER JOIN skier s ON b.skierid = s.skierid "
+					+ "INNER JOIN period p ON p.periodid = b.periodid "
+					+ "WHERE b.lessonid = ?";
+			
 			
 			PreparedStatement statement = connect.prepareStatement(query);
          	ResultSet resultSet = statement.executeQuery();
@@ -161,19 +174,55 @@ public class LessonDAO extends DAO<Lesson> {
                 int lessonTypeId = resultSet.getInt("ltId");
                 String lessonLevel = resultSet.getString("lessonlevel");
                 double lessonPrice = resultSet.getDouble("price");
+                int minAge = resultSet.getInt("minage");
+                int maxAge = resultSet.getInt("maxAge");
 
                 // Récupération des données de la table Accreditation
                 int accreditationId = resultSet.getInt("accreditationid");
                 String accreditationName = resultSet.getString("nameAccred");
-
+                
                 // Création des objets
                 Accreditation accreditation = new Accreditation(accreditationId, accreditationName);
-                LessonType lessonType = new LessonType(lessonTypeId, lessonLevel, lessonPrice, accreditation);
+                LessonType lessonType = new LessonType(lessonTypeId, lessonLevel, lessonPrice, accreditation, minAge, maxAge);
                 Instructor instructor = new Instructor(instructorId, instructorName, instructorSurname, 
                                                         instructorDob.toLocalDate(), instructorPhone, accreditation);
                      
                 // Création de la leçon
                 Lesson lesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, instructor, lessonType, isIndividual, startHour, endHour, duration);
+                
+                PreparedStatement substmt = connect.prepareStatement(bookingQuery);
+                substmt.setInt(1, lessonId);
+                
+                ResultSet subRes = substmt.executeQuery();
+                
+                while(subRes.next()) {
+                	int bookingId = subRes.getInt("bookingid");
+                	LocalDate bookingDate = subRes.getDate("bookingdate").toLocalDate();
+                	boolean isInsured;
+                	
+                	if(subRes.getString("isinsured").charAt(0) == 'Y') {
+                    	isInsured = true;
+                    }else {
+                    	isInsured = false;
+                    }
+                	
+                	Skier skier = new Skier(subRes.getString("name"), subRes.getString("surname"), subRes.getDate("dateofbirth").toLocalDate(), Integer.parseInt(subRes.getString("phonenumber")));
+                	
+                	boolean isVacation;
+                	
+                	if(subRes.getString("isVacation").charAt(0) == 'Y') {
+                    	isVacation = true;
+                    }else {
+                    	isVacation = false;
+                    }
+                	
+                	
+                	Period period = new Period(subRes.getInt("periodid"), subRes.getDate("startdate").toLocalDate(), subRes.getDate("enddate").toLocalDate(), isVacation);
+                	
+                	Booking currBook = new Booking(bookingId, bookingDate, instructor, skier, lesson, period, isInsured);
+                	
+                	lesson.addBooking(currBook);
+                }
 
                 // Ajout de la leçon à la liste
                 lessons.add(lesson);

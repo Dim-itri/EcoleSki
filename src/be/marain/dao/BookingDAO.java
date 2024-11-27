@@ -3,6 +3,7 @@ package be.marain.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +22,41 @@ public class BookingDAO extends DAO<Booking> {
 	}
 
 	@Override
-	public boolean create(Booking obj) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean create(Booking booking) {
+		boolean success;
+		String[] returnCols = {"periodid"}; 
+		String query = "INSERT INTO booking (bookingdate, lessonid, periodid, skierid, isinsured) VALUES (?, ?, ?, ?, ?)";
+		
+		try {
+			PreparedStatement statement = connect.prepareStatement(query, returnCols);
+			statement.setDate(1, java.sql.Date.valueOf(booking.getBookingDate()));
+			statement.setInt(2, booking.getLesson().getLessonId());
+			statement.setInt(3, booking.getPeriod().getPeriodId());
+			statement.setInt(4, booking.getSkier().getPersonId());
+			
+			if (booking.getIsInsured()) {
+				statement.setString(5, "Y");
+			}else {
+				statement.setString(5, "N");
+			}
+			
+			success = statement.executeUpdate() > 0;
+			
+			if (success) {
+				ResultSet generatedKeys = statement.getGeneratedKeys();
+				
+				if(generatedKeys.next()) {
+					int generatedId = generatedKeys.getInt(1);
+					booking.setBookingId(generatedId);
+				}
+			}
+			statement.close();
+		}catch (SQLException e) {
+			success = false;
+			e.printStackTrace();
+		}
+		
+		return success;
 	}
 
 	@Override
@@ -51,12 +84,12 @@ public class BookingDAO extends DAO<Booking> {
 		try {
 			//Getting all the infos beside accreditations for the instructor
 			//to avoid multiple lines for 1 booking
-			String query = "SELECT b.bookingid, b.bookingDate, "
+			String query = "SELECT b.bookingid, b.bookingDate, b.isinsured,"
 					+ "s.skierid, s.name AS \"skier_name\", s.surname AS \"skier_surname\", s.dateofbirth AS \"skier_dob\", s.phonenumber AS \"skier_phone\", "
 					+ "p.periodid, p.startdate, p.enddate, "
 					+ "l.lessonid, l.minbookings, l.maxbookings, l.lessondate, l.isIndividual, l.starthour, l.endhour, l.duration, "
 					+ "i.instructorid, i.name AS \"instructor_name\", i.surname AS \"instructor_surname\", i.phonenumber AS \"instructor_phone\", i.dateofbirth AS \"instructor_dob\", "
-					+ "lt.ltid, lt.lessonlevel, lt.price, "
+					+ "lt.ltid, lt.lessonlevel, lt.price, lt.minage, lt.maxage, "
 					+ "a.accreditationid, a.name AS \"accred_name\""
 					+ "FROM booking b "
 					+ "INNER JOIN period p ON p.periodid = b.periodid "
@@ -77,6 +110,13 @@ public class BookingDAO extends DAO<Booking> {
 				// Récupération des données de booking
                 int bookingId = res.getInt("bookingid");
                 LocalDate bookingDate = res.getDate("bookingDate").toLocalDate();
+                boolean isinsured;
+                
+                if(res.getString("isInsured").charAt(0) == 'Y') {
+                	isinsured = true;
+                }else {
+                	isinsured= false;
+                }
                 
                 // Récupération des données de skier
                 int skierId = res.getInt("skierid");
@@ -137,6 +177,8 @@ public class BookingDAO extends DAO<Booking> {
                 int lessonTypeId = res.getInt("ltid");
                 String lessonLevel = res.getString("lessonlevel");
                 double price = res.getDouble("price");
+                int minAge = res.getInt("minage");
+                int maxAge = res.getInt("maxage");
                 
                 Instructor currInst = new Instructor(instructorName, instructorSurname, instructorDob, instructorPhone, accreditations.get(0));
                 
@@ -144,7 +186,7 @@ public class BookingDAO extends DAO<Booking> {
                 	currInst.addAccreditation(accreditations.get(i));
                 }
                 
-                LessonType currLessonType = new LessonType(lessonTypeId, lessonLevel, price, new Accreditation(accredid, accredName));
+                LessonType currLessonType = new LessonType(lessonTypeId, lessonLevel, price, new Accreditation(accredid, accredName), minAge, maxAge);
                 
                 Lesson currLesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, currInst, currLessonType, isIndividual, startHour, endHour, duration);
                 
@@ -152,7 +194,7 @@ public class BookingDAO extends DAO<Booking> {
                 
                 Period currPeriod = new Period(periodId, startDate, endDate, true);
                 
-                Booking currBooking = new Booking(bookingId , bookingDate, currInst, currSkier, currLesson, currPeriod);
+                Booking currBooking = new Booking(bookingId , bookingDate, currInst, currSkier, currLesson, currPeriod, isinsured);
                 
                 bookings.add(currBooking);
 			}

@@ -15,8 +15,12 @@ public class Skier extends Person {
 		this(0, name, surname, dob, phone);
 	}
 	
-	public boolean isAvailable() {
-		return false;
+	public boolean isOldEnough(Lesson lesson) {
+		if(lesson.getLessonType().getMaxAge() != 0) {
+			return getAge() < lesson.getLessonType().getMaxAge() && getAge() > lesson.getLessonType().getMinAge();
+		}
+		
+		return getAge() > lesson.getLessonType().getMinAge();
 	}
 
 	public boolean createSkier(SkierDAO dao) {

@@ -1,12 +1,19 @@
 package be.marain.classes;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import be.marain.dao.PeriodDAO;
 
 public class Period {
 	private int periodId;
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private boolean isVacation;
+	
+	public static List<Period> getAllPeriods(PeriodDAO dao){
+		return dao.findAll();
+	}
 
 	public LocalDate getEndDate() {
 		return endDate;

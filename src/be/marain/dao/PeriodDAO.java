@@ -42,8 +42,7 @@ public class PeriodDAO extends DAO<Period>{
 	}
 
 	@Override
-	public Period find(int id) {
-		// TODO Auto-generated method stub
+	public Period find(int index) {
 		return null;
 	}
 
@@ -60,8 +59,17 @@ public class PeriodDAO extends DAO<Period>{
 				int periodid = res.getInt("periodid");
 				LocalDate startDate = res.getDate("startdate").toLocalDate();
 				LocalDate enddate = res.getDate("enddate").toLocalDate();
+				boolean isVacation;
+            	
+            	if(res.getString("isVacation").charAt(0) == 'Y') {
+                	isVacation = true;
+                }else {
+                	isVacation = false;
+                }
 				
-				Period period = new Period(periodid, startDate, enddate, false);
+				Period period = new Period(periodid, startDate, enddate, isVacation);
+				
+				periods.add(period);
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();

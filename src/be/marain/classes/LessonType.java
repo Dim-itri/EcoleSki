@@ -9,6 +9,8 @@ public class LessonType {
 	private String level;
 	private double price;
 	private Accreditation accreditation;
+	private int minAge;
+	private int maxAge;
 	
 	public static List<LessonType> getAllLessonTypes(LessonTypeDAO dao){
 		return dao.findAll();
@@ -20,6 +22,14 @@ public class LessonType {
 
 	public int getLtId() {
 		return ltId;
+	}
+	
+	public int getMaxAge() {
+		return maxAge;
+	}
+	
+	public int getMinAge() {
+		return minAge;
 	}
 
 	public double getPrice() {
@@ -44,15 +54,25 @@ public class LessonType {
 		}
 	}
 	
+	public void setMaxAge(int maxAge) {
+		this.maxAge = maxAge;
+	}
+	
+	public void setMinAge(int minAge) {
+		this.minAge = minAge;
+	}
+	
 	public Accreditation getAccreditation() {
 		return accreditation;
 	}
 
-	public LessonType(int id, String level, double price, Accreditation accreditation) {
+	public LessonType(int id, String level, double price, Accreditation accreditation, int minAge, int maxAge) {
 		setLevel(level);
 		setLtId(id);
 		setPrice(price);
 		setAccreditation(accreditation);
+		setMinAge(minAge);
+		setMaxAge(maxAge);
 	}
 	
 	@Override

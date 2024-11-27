@@ -1,5 +1,6 @@
 package be.marain.classes;
 
+import java.security.PublicKey;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 
@@ -13,6 +14,9 @@ public abstract class Person {
 	private static final String dobRegEx = "^(19[0-9]{2}|20[0-9]{2})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
 	private static final String phoneRegEx = "^(\\+\\d{1,3})?\\s?(\\(?\\d{1,4}\\)?)?[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}[\\s.-]?\\d{2,4}$";
 
+	public int getAge() {
+		return java.time.Period.between(dateOfBirth, LocalDate.now()).getYears();
+	}
 	
 	public LocalDate getDateOfBirth() {
 		return dateOfBirth;

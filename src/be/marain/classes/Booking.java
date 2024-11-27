@@ -12,9 +12,10 @@ public class Booking {
 	private Period period;
 	private Skier skier;
 	private Lesson lesson;
+	private boolean isInsured;
 	
 	public Booking(int id, LocalDate bookingDate, Instructor instructor, Skier skier,
-			Lesson lesson, Period period) {
+			Lesson lesson, Period period, boolean insured) {
 		setBookingId(id);
 		setBookingDate(bookingDate);
 		setInstructor(instructor);
@@ -24,8 +25,12 @@ public class Booking {
 	}
 
 	public Booking(LocalDate bookingDate,Instructor instructor, Skier skier,
-			Lesson lesson, Period period) {
-		this(0, bookingDate,instructor, skier, lesson, period);
+			Lesson lesson, Period period, boolean insured) {
+		this(0, bookingDate,instructor, skier, lesson, period, insured);
+	}
+	
+	public boolean createBooking(BookingDAO dao) {
+		return dao.create(this);
 	}
 	
 	public static List<Booking> getAllBookings(BookingDAO dao){
@@ -44,6 +49,10 @@ public class Booking {
 		return lesson;
 	}
 	
+	public boolean getIsInsured() {
+		return isInsured;
+	}
+	
 	public Instructor getInstructor() {
 		return instructor;
 	}
@@ -54,6 +63,10 @@ public class Booking {
 	
 	public LocalDate getBookingDate() {
 		return bookingDate;
+	}
+	
+	public void setIsInsured(boolean insured) {
+		this.isInsured = insured;
 	}
 
 	public void setBookingId(int bookingId) {

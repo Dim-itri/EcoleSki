@@ -44,7 +44,7 @@ public class LessonTypeDAO extends DAO<LessonType> {
 		try {
 			ResultSet resultSet = this.connect
 					.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT lt.ltid, lt.lessonlevel, lt.price, "
+					.executeQuery("SELECT lt.ltid, lt.lessonlevel, lt.price, lt.minage, lt.maxage, "
 							+ "a.accreditationid, a.name "
 							+ " FROM lessontype lt "
 							+ "INNER JOIN accreditation a ON a.accreditationid = lt.accreditationid");
@@ -55,8 +55,10 @@ public class LessonTypeDAO extends DAO<LessonType> {
 				double price = resultSet.getDouble("price");
 				int accredId = resultSet.getInt("accreditationid");
 				String accredName = resultSet.getString("name");
+				int minAge = resultSet.getInt("minage");
+				int maxAge = resultSet.getInt("maxage");
 				
-				LessonType newLessonType = new LessonType(ltid, lessonlevel, price, new Accreditation(accredId, accredName));
+				LessonType newLessonType = new LessonType(ltid, lessonlevel, price, new Accreditation(accredId, accredName), minAge, maxAge);
 				
 				lessonTypes.add(newLessonType);
 			}

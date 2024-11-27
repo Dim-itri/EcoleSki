@@ -11,6 +11,13 @@ public class BookingTableModel extends AbstractTableModel{
 	String[] columnNames = {"Id", "Date","Instructeur", "Skieur", "Leçon", "Période"};
 	List<Booking> bookings;
 	
+	public void addBooking(Booking newBooking) {
+		if(newBooking != null) {
+			bookings.add(newBooking);
+			fireTableRowsInserted(getRowCount()-1, getRowCount()-1);
+		}
+	}
+	
 	public BookingTableModel(List<Booking> bookings) {
 		if(bookings != null) {
 			this.bookings = bookings;
