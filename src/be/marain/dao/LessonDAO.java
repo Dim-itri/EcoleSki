@@ -1,6 +1,5 @@
 package be.marain.dao;
 
-import java.nio.channels.SelectableChannel;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;

@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import be.marain.classes.Accreditation;
 import be.marain.classes.Booking;
@@ -24,7 +26,7 @@ public class BookingDAO extends DAO<Booking> {
 	@Override
 	public boolean create(Booking booking) {
 		boolean success;
-		String[] returnCols = {"periodid"}; 
+		String[] returnCols = {"bookingid"}; 
 		String query = "INSERT INTO booking (bookingdate, lessonid, periodid, skierid, isinsured) VALUES (?, ?, ?, ?, ?)";
 		
 		try {
@@ -80,10 +82,9 @@ public class BookingDAO extends DAO<Booking> {
 	@Override
 	public List<Booking> findAll() {
 		List<Booking> bookings = new ArrayList<Booking>();
+		Map<Integer, Skier> skierMap = new HashMap<>();
 		
 		try {
-			//Getting all the infos beside accreditations for the instructor
-			//to avoid multiple lines for 1 booking
 			String query = "SELECT b.bookingid, b.bookingDate, b.isinsured,"
 					+ "s.skierid, s.name AS \"skier_name\", s.surname AS \"skier_surname\", s.dateofbirth AS \"skier_dob\", s.phonenumber AS \"skier_phone\", "
 					+ "p.periodid, p.startdate, p.enddate, "
@@ -190,11 +191,18 @@ public class BookingDAO extends DAO<Booking> {
                 
                 Lesson currLesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, currInst, currLessonType, isIndividual, startHour, endHour, duration);
                 
-                Skier currSkier = new Skier(skierId, skierName, skierSurname, skierDob, skierPhone);
+                Skier currSkier = skierMap.get(skierId);
+                if (currSkier == null) {
+                    // Si le skieur n'existe pas encore, on le crée
+                    currSkier = new Skier(skierId, skierName, skierSurname, skierDob, skierPhone);
+                    skierMap.put(skierId, currSkier); // On ajoute le skieur au Map
+                }
                 
                 Period currPeriod = new Period(periodId, startDate, endDate, true);
                 
                 Booking currBooking = new Booking(bookingId , bookingDate, currInst, currSkier, currLesson, currPeriod, isinsured);
+                
+                currSkier.addBooking(currBooking);
                 
                 bookings.add(currBooking);
 			}

@@ -8,7 +8,7 @@ import be.marain.classes.Booking;
 
 public class BookingTableModel extends AbstractTableModel{
 	private static final long serialVersionUID = 1L;
-	String[] columnNames = {"Id", "Date","Instructeur", "Skieur", "Leçon", "Période"};
+	String[] columnNames = {"Id", "Date","Instructeur", "Skieur", "Leçon", "Période", "Prix"};
 	List<Booking> bookings;
 	
 	public void addBooking(Booking newBooking) {
@@ -56,6 +56,8 @@ public class BookingTableModel extends AbstractTableModel{
 			return booking.getLesson().toString();
 		case 5:
 			return booking.getPeriod().toString();
+		case 6:
+			return booking.calculatePrice();
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + columnIndex);
 		}			

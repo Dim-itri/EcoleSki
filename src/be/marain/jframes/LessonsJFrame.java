@@ -336,14 +336,16 @@ public class LessonsJFrame extends JFrame {
 
 					boolean isIndividual = chckbxIsIndividual.isSelected();
 					int duration = endHour - startHour;
-							
-					System.out.println(duration);
 					
 					Lesson newLesson = new Lesson(minBook, maxBook, date, selectedInstructor, selectedLessonType, isIndividual, startHour, endHour, duration);
 					
-					if(newLesson.addLesson(lessonDAO)) {
-						model.addLesson(newLesson);
-						JOptionPane.showMessageDialog(null, "Leçon créée !");
+					if(newLesson.canBeCreated()) {
+						if(newLesson.addLesson(lessonDAO)) {
+							model.addLesson(newLesson);
+							JOptionPane.showMessageDialog(null, "Leçon créée !");
+						}
+					}else {
+						JOptionPane.showMessageDialog(null, "Impossible de créer. La station ouvre du samedi 06/12/2024 au dimanche 03/05/2025.");
 					}
 				}catch (NumberFormatException ex) {
 					JOptionPane.showMessageDialog(null, "Veuillez entrer un nombre de réservations correct.");

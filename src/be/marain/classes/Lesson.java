@@ -40,6 +40,14 @@ public class Lesson {
 		this(0, min, max, date, instructor, lessonType, individual, startHour, endHour, duration);
 	}
 	
+	public boolean canBeCreated() {
+		if (date.isBefore(LocalDate.of(2024, 12, 6)) || date.isAfter(LocalDate.of(2025, 5, 3))) {
+	        return false; 
+	    }
+		
+		return true;
+	}
+
 	public boolean isFull() {
 		return bookings.size() >= maxBookings;
 	}

@@ -1,6 +1,5 @@
 package be.marain.classes;
 
-import java.security.PublicKey;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 

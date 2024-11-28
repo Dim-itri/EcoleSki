@@ -1,21 +1,13 @@
 package be.marain.dao;
 
-import java.security.interfaces.RSAKey;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.marain.classes.Accreditation;
-import be.marain.classes.Booking;
-import be.marain.classes.Instructor;
-import be.marain.classes.Lesson;
-import be.marain.classes.LessonType;
 import be.marain.classes.Period;
-import be.marain.classes.Skier;
 
 public class PeriodDAO extends DAO<Period>{
 

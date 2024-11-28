@@ -41,8 +41,8 @@ public class BookingsJFrame extends JFrame {
 	private Skier selectedSkier;
 	private Lesson selectedLesson;
 	JCheckBox chckbxInsurance;
-	JComboBox cbSkier;
-	JComboBox cbLesson;
+	JComboBox<Skier> cbSkier;
+	JComboBox<Lesson> cbLesson;
 
 	/**
 	 * Launch the application.
@@ -125,7 +125,7 @@ public class BookingsJFrame extends JFrame {
 		chckbxInsurance.setBounds(94, 159, 93, 21);
 		tablePanel.add(chckbxInsurance);
 		
-		cbLesson = new JComboBox();
+		cbLesson = new JComboBox<Lesson>();
 		cbLesson.setBounds(94, 220, 257, 22);
 		tablePanel.add(cbLesson);
 		
@@ -136,7 +136,7 @@ public class BookingsJFrame extends JFrame {
 			}
 		});
 		
-		cbSkier = new JComboBox();
+		cbSkier = new JComboBox<Skier>();
 		for(int i=0;i<skiers.size();i++) {
 			cbSkier.addItem(skiers.get(i));
 		}
@@ -150,7 +150,7 @@ public class BookingsJFrame extends JFrame {
 				selectedSkier = (Skier)cbSkier.getSelectedItem();
 				
 				for(Lesson curr:lessons) {									
-					if(selectedSkier.isOldEnough(curr) && !curr.isFull() && selectedSkier.isAvailable(curr.getDate(), curr.getStartHour(), curr.getEndHour(), curr, bookings)) {
+					if(selectedSkier.isOldEnough(curr) && !curr.isFull() && selectedSkier.isAvailable(curr.getDate(), curr.getStartHour(), curr.getEndHour())) {
 						cbLesson.addItem(curr);
 					}
 				}
@@ -163,22 +163,27 @@ public class BookingsJFrame extends JFrame {
 				try {
 					Period period = null;
 					
-					System.out.println(periods.size());
-					
 					for(Period currPeriod:periods) {
 						if (selectedLesson.getDate().isAfter(currPeriod.getStartDate()) && selectedLesson.getDate().isBefore(currPeriod.getEndDate())) {
 							period = currPeriod;
 						}
 					}
-				
+					
 					Booking newBooking = new Booking(LocalDate.now(), selectedLesson.getInstructor(), selectedSkier, selectedLesson, period, chckbxInsurance.isSelected());
 					
-					selectedLesson.addBooking(newBooking);
-					
-					if(newBooking.createBooking(bookingDAO)) {
-						model.addBooking(newBooking);
-						JOptionPane.showMessageDialog(null, "Réservation créée !");
-						resetFields();
+					if(newBooking.canBook(selectedLesson)) {
+						
+						if(newBooking.createBooking(bookingDAO)) {
+							model.addBooking(newBooking);
+							selectedLesson.addBooking(newBooking);
+							selectedSkier.addBooking(newBooking);
+							
+							JOptionPane.showMessageDialog(null, "Réservation créée !");
+							resetFields();
+						}	
+						
+					}else {
+						JOptionPane.showMessageDialog(null, "Réservation en dehors des délais");
 					}
 				}catch (Exception ex) {
 					JOptionPane.showMessageDialog(null, ex.getMessage());

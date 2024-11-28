@@ -24,17 +24,67 @@ public class Booking {
 		setSkier(skier);
 	}
 	
-	public boolean isReducted() {
+	public double calculatePrice() {
+		double price = 0;
+
+		if(lesson.getIsIndividual()) {
+			if(lesson.getDuration() == 1) {
+				price = 60;
+			}else {
+				price = 90;
+			}
+		}else {
+			price = lesson.getLessonType().getPrice();
+			
+			if (isReduced()) {
+				price -= price*0.15;
+			}
+		}
 		
+		if(isInsured) {
+			price += 20;
+		}
+		
+		return price;
 	}
 	
-	public int calculatePrice() {
-		
-	}
+	public boolean isReduced() {
+	    boolean hasMorningLesson = false;
+	    boolean hasAfternoonLesson = false;
+	    
+	    for (Booking booking : skier.getBookings()) {
 
+	        if (booking.getLesson().getDate().equals(this.getLesson().getDate())) {
+	            int lessonStartHour = booking.getLesson().getStartHour();
+       
+	            if (lessonStartHour == 9) {
+	                hasMorningLesson = true;
+	            }
+	            
+	            else if (lessonStartHour == 14) {
+	                hasAfternoonLesson = true;
+	            }
+	        }
+	    }
+
+	    return hasMorningLesson && hasAfternoonLesson;
+	}
+	
 	public Booking(LocalDate bookingDate,Instructor instructor, Skier skier,
 			Lesson lesson, Period period, boolean insured) {
 		this(0, bookingDate,instructor, skier, lesson, period, insured);
+	}
+	
+	public boolean canBook(Lesson lesson) {
+		if(lesson.getIsIndividual()) {
+			if(period.getVacation()) {
+				return !LocalDate.now().isAfter(lesson.getDate().minusWeeks(1));
+			}else {
+				return !LocalDate.now().isAfter(lesson.getDate().minusMonths(1));
+			}
+		}
+		
+		return true;
 	}
 	
 	public boolean createBooking(BookingDAO dao) {
