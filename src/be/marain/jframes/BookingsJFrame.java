@@ -1,7 +1,6 @@
 package be.marain.jframes;
 
 import java.awt.EventQueue;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -78,7 +77,7 @@ public class BookingsJFrame extends JFrame {
 		List<Period> periods = Period.getAllPeriods(periodDAO);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1498, 769);
+		setBounds(100, 100, 1385, 769);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -86,7 +85,7 @@ public class BookingsJFrame extends JFrame {
 		contentPane.setLayout(null);
 		
 		JPanel tablePanel = new JPanel();
-		tablePanel.setBounds(5, 5, 1911, 725);
+		tablePanel.setBounds(5, 5, 1373, 725);
 		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		tablePanel.setLayout(null);
 		
@@ -97,7 +96,7 @@ public class BookingsJFrame extends JFrame {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(407, 11, 1048, 699);
+		scrollPane.setBounds(407, 11, 953, 699);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);	
 		tablePanel.add(scrollPane);
 		contentPane.add(tablePanel);
@@ -147,10 +146,11 @@ public class BookingsJFrame extends JFrame {
 		cbSkier.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				cbLesson.removeAllItems();
 				selectedSkier = (Skier)cbSkier.getSelectedItem();
 				
-				for(Lesson curr:lessons) {
-					if(selectedSkier.isOldEnough(curr) && !curr.isFull()) {
+				for(Lesson curr:lessons) {									
+					if(selectedSkier.isOldEnough(curr) && !curr.isFull() && selectedSkier.isAvailable(curr.getDate(), curr.getStartHour(), curr.getEndHour(), curr, bookings)) {
 						cbLesson.addItem(curr);
 					}
 				}
@@ -160,17 +160,17 @@ public class BookingsJFrame extends JFrame {
 		JButton btnCreate = new JButton("Créer");
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Period period = null;
-				
-				System.out.println(periods.size());
-				
-				for(Period currPeriod:periods) {
-					if (selectedLesson.getDate().isAfter(currPeriod.getStartDate()) && selectedLesson.getDate().isBefore(currPeriod.getEndDate())) {
-						period = currPeriod;
-					}
-				}
-				
 				try {
+					Period period = null;
+					
+					System.out.println(periods.size());
+					
+					for(Period currPeriod:periods) {
+						if (selectedLesson.getDate().isAfter(currPeriod.getStartDate()) && selectedLesson.getDate().isBefore(currPeriod.getEndDate())) {
+							period = currPeriod;
+						}
+					}
+				
 					Booking newBooking = new Booking(LocalDate.now(), selectedLesson.getInstructor(), selectedSkier, selectedLesson, period, chckbxInsurance.isSelected());
 					
 					selectedLesson.addBooking(newBooking);

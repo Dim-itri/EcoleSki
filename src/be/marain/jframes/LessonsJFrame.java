@@ -33,6 +33,7 @@ import com.toedter.calendar.JDateChooser;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 
 public class LessonsJFrame extends JFrame {
 
@@ -50,10 +51,13 @@ public class LessonsJFrame extends JFrame {
 	private Lesson selectedLesson;
 	private int selectedRow;
 	private JDateChooser dclessonDate;
-	private JTextField tfEndHour;
-	private JTextField tfStartHour;
 	private JCheckBox chckbxIsIndividual;
-
+	private JRadioButton rdbtnMorning;
+	private JRadioButton rdbtnAfternoon;
+	private int startHour;
+	private int endHour;
+	JRadioButton rdbtn1Hour;
+	JRadioButton rdbtn2Hours;
 	/**
 	 * Launch the application.
 	 */
@@ -78,6 +82,8 @@ public class LessonsJFrame extends JFrame {
 		selectedInstructor = null;
 		selectedLesson = null;
 		selectedLessonType = null;
+		rdbtnAfternoon.setSelected(false);
+		rdbtnMorning.setSelected(false);
 	}
 
 	/**
@@ -126,6 +132,66 @@ public class LessonsJFrame extends JFrame {
 		    tableColumn.setPreferredWidth(150); // Largeur par défaut de chaque colonne
 		}
 		
+		rdbtn1Hour = new JRadioButton("1 heure");
+		rdbtn1Hour.setBounds(147, 265, 103, 21);
+		tablePanel.add(rdbtn1Hour);
+		
+		rdbtn1Hour.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				endHour = 13;
+				rdbtn2Hours.setSelected(false);
+				rdbtnAfternoon.setSelected(false);
+				rdbtnMorning.setSelected(false);
+			}
+		});
+		
+		rdbtn2Hours = new JRadioButton("2 heures");
+		rdbtn2Hours.setBounds(252, 265, 103, 21);
+		tablePanel.add(rdbtn2Hours);
+		
+		rdbtn2Hours.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				endHour = 14;
+				rdbtn1Hour.setSelected(false);
+				rdbtnAfternoon.setSelected(false);
+				rdbtnMorning.setSelected(false);				
+			}
+		});
+		
+		rdbtnMorning = new JRadioButton("Matin");
+		rdbtnMorning.setBounds(106, 312, 103, 21);
+		tablePanel.add(rdbtnMorning);
+		
+		rdbtnAfternoon = new JRadioButton("Après-midi");
+		rdbtnAfternoon.setBounds(106, 347, 103, 21);
+		tablePanel.add(rdbtnAfternoon);
+		
+		rdbtnMorning.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startHour = 9;
+				endHour = 12;
+				rdbtnAfternoon.setSelected(false);
+				chckbxIsIndividual.setSelected(false);
+				rdbtn1Hour.setSelected(false);
+				rdbtn2Hours.setSelected(false);
+			}
+		});
+		
+		rdbtnAfternoon.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startHour = 14;
+				endHour = 17;
+				rdbtnMorning.setSelected(false);
+				chckbxIsIndividual.setSelected(false);
+				rdbtn1Hour.setSelected(false);
+				rdbtn2Hours.setSelected(false);
+			}
+		});
+		
 		cbLessonType = new JComboBox<LessonType>();
 		for(LessonType lt:lessonTypes) {
 			cbLessonType.addItem(lt);
@@ -139,8 +205,6 @@ public class LessonsJFrame extends JFrame {
 				try {
 					selectedLessonType = (LessonType)cbLessonType.getSelectedItem(); 
 					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-					int startHour = Integer.parseInt(tfStartHour.getText());
-					int endHour = Integer.parseInt(tfEndHour.getText());
 					
 					cbInstructor.removeAllItems();
 					
@@ -163,6 +227,7 @@ public class LessonsJFrame extends JFrame {
 		});
 		
 		table.getSelectionModel().addListSelectionListener(event -> {
+			resetFields();
 			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
 				selectedRow = table.getSelectedRow();
 				selectedLesson = model.getLessonAt(selectedRow);
@@ -172,8 +237,11 @@ public class LessonsJFrame extends JFrame {
 				tfMin.setText(String. valueOf(selectedLesson.getMinBookings()));
 				tfMax.setText(String.valueOf(selectedLesson.getMaxBookings()));
 				dclessonDate.setDate(Date.from(selectedLesson.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-				tfStartHour.setText(String.valueOf(selectedLesson.getStartHour()));
-				tfEndHour.setText(String.valueOf(selectedLesson.getEndHour()));
+				if(selectedLesson.getStartHour() == 9) {
+					rdbtnMorning.setSelected(true);
+				}else{
+					rdbtnAfternoon.setSelected(true);
+				}
 				chckbxIsIndividual.setSelected(selectedLesson.getIsIndividual());
 				
 				cbLessonType.setSelectedItem(selectedLessonType);
@@ -226,27 +294,25 @@ public class LessonsJFrame extends JFrame {
 		lblIndividual.setBounds(10, 265, 70, 21);
 		tablePanel.add(lblIndividual);
 		
-		JLabel lblstartHour = new JLabel("Heure de début");
-		lblstartHour.setBounds(10, 315, 86, 14);
-		tablePanel.add(lblstartHour);
-		
-		JLabel lblendHour = new JLabel("Heure de fin");
-		lblendHour.setBounds(10, 350, 86, 14);
-		tablePanel.add(lblendHour);
-		
-		tfStartHour = new JTextField();
-		tfStartHour.setBounds(106, 312, 86, 20);
-		tablePanel.add(tfStartHour);
-		tfStartHour.setColumns(10);
-		
-		tfEndHour = new JTextField();
-		tfEndHour.setBounds(106, 347, 86, 20);
-		tablePanel.add(tfEndHour);
-		tfEndHour.setColumns(10);
+		JLabel lblHour = new JLabel("Horaire");
+		lblHour.setBounds(10, 315, 86, 14);
+		tablePanel.add(lblHour);
 		
 		chckbxIsIndividual = new JCheckBox("");
-		chckbxIsIndividual.setBounds(105, 264, 97, 23);
+		chckbxIsIndividual.setBounds(105, 264, 29, 23);
 		tablePanel.add(chckbxIsIndividual);
+		
+		chckbxIsIndividual.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(chckbxIsIndividual.isSelected()) {
+					startHour = 12;
+					rdbtnAfternoon.setSelected(false);
+					rdbtnMorning.setSelected(false);
+				}
+				
+			}
+		});
 		
 		JButton btnHome = new JButton("Accueil");
 		btnHome.addActionListener(new ActionListener() {
@@ -267,8 +333,7 @@ public class LessonsJFrame extends JFrame {
 					int maxBook = Integer.parseInt(tfMax.getText());
 					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					selectedInstructor = (Instructor)cbInstructor.getSelectedItem();
-					int startHour = Integer.parseInt(tfStartHour.getText());
-					int endHour = Integer.parseInt(tfEndHour.getText());
+
 					boolean isIndividual = chckbxIsIndividual.isSelected();
 					int duration = endHour - startHour;
 							
@@ -320,8 +385,7 @@ public class LessonsJFrame extends JFrame {
 				try {
 					int minBook = Integer.parseInt(tfMin.getText());
 					int maxBook = Integer.parseInt(tfMax.getText());
-					int startHour = Integer.parseInt(tfStartHour.getText());
-					int endHour = Integer.parseInt(tfEndHour.getText());
+					
 					boolean isIndividual = chckbxIsIndividual.isSelected();
 					int duration = endHour - startHour;
 					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

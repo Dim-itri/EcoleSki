@@ -23,6 +23,14 @@ public class Booking {
 		setPeriod(period);
 		setSkier(skier);
 	}
+	
+	public boolean isReducted() {
+		
+	}
+	
+	public int calculatePrice() {
+		
+	}
 
 	public Booking(LocalDate bookingDate,Instructor instructor, Skier skier,
 			Lesson lesson, Period period, boolean insured) {

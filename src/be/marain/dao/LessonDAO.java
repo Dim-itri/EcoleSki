@@ -93,8 +93,11 @@ public class LessonDAO extends DAO<Lesson> {
 		boolean success;
 		
 		try {
-			String query = "UPDATE lesson SET minbookings = ?, maxbookings = ? , instructorid = ?, ltid = ?, lessondate = ? "
+			String query = "UPDATE lesson SET minbookings = ?, maxbookings = ? , instructorid = ?, ltid = ?, lessondate = ?, startHour = ?, "
+					+ "endHour = ?, isIndividual = ?, duration = ? "
 					+ "WHERE lessonid = ?";
+			
+			System.out.println(updatedLesson.getStartHour());
 			
 			PreparedStatement statement = connect.prepareStatement(query);
 			statement.setInt(1, updatedLesson.getMinBookings());
@@ -102,7 +105,15 @@ public class LessonDAO extends DAO<Lesson> {
 			statement.setInt(3, updatedLesson.getInstructor().getPersonId());
 			statement.setInt(4, updatedLesson.getLessonType().getLtId());
 			statement.setDate(5, java.sql.Date.valueOf(updatedLesson.getDate()));
-			statement.setInt(6, updatedLesson.getLessonId());
+			statement.setInt(6, updatedLesson.getStartHour());
+			statement.setInt(7, updatedLesson.getEndHour());
+			if (updatedLesson.getIsIndividual() == true) {
+				statement.setString(8, "Y");
+			}else {
+				statement.setString(8, "N");
+			}
+			statement.setInt(9, updatedLesson.getDuration());
+			statement.setInt(10, updatedLesson.getLessonId());
 			
 			success = statement.executeUpdate() > 0;
 			statement.close();

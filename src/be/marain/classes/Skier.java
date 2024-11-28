@@ -7,6 +7,8 @@ import java.util.List;
 import be.marain.dao.SkierDAO;
 
 public class Skier extends Person {
+	private List<Booking> bookings;
+	
 	public Skier(int id, String name, String surname, LocalDate dob, int phone) {
 		super(id, name, surname, dob, phone);
 	}
@@ -14,6 +16,21 @@ public class Skier extends Person {
 	public Skier(String name, String surname, LocalDate dob, int phone) {
 		this(0, name, surname, dob, phone);
 	}
+	
+	public boolean isAvailable(LocalDate date, int startHour, int endHour, Lesson lesson) {
+	    for (Booking currBook : bookings) {
+	            Lesson currLesson = currBook.getLesson();
+	            	            
+	            if (currLesson.getDate().equals(date)) {
+	                if (startHour > currLesson.getStartHour() && endHour > currLesson.getEndHour()) {
+	                    return false;
+	                }
+	            }
+	    }
+	    return true;
+    }
+	    
+
 	
 	public boolean isOldEnough(Lesson lesson) {
 		if(lesson.getLessonType().getMaxAge() != 0) {
