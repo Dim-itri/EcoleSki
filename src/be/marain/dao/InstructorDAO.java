@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -141,52 +140,34 @@ public class InstructorDAO extends DAO<Instructor> {
 	
 	@Override
 	public List<Instructor> findAll() {
-	    List<Instructor> instructors = new ArrayList<>();
-	    Map<Integer, Instructor> instructorMap = new HashMap<>(); // Map temporaire pour éviter les doublons d'instructeurs
-
-	    String query = """
-	        SELECT i.instructorid, i.name, i.surname, i.dateofbirth, i.phonenumber,
-	               a.accreditationid AS accred_id, a.name AS accred_name
-	        FROM instructor i
-	        LEFT JOIN InstructorAccred ia ON i.instructorid = ia.instructorid
-	        LEFT JOIN accreditation a ON ia.accreditationid = a.accreditationid
-	        ORDER BY i.instructorid
-	    """;
-
-	    try (PreparedStatement stmt = connect.prepareStatement(query);
-	         ResultSet rs = stmt.executeQuery()) {
-
-	        while (rs.next()) {
-	            int instructorId = rs.getInt("instructorid");
-
-	            // Si l'instructeur n'est pas encore dans la Map, on le crée
-	            Instructor instructor = instructorMap.computeIfAbsent(instructorId, id -> {
-	                try {
-	                    String name = rs.getString("name");
-	                    String surname = rs.getString("surname");
-	                    LocalDate dob = rs.getDate("dateofbirth").toLocalDate();
-	                    int phone = rs.getInt("phonenumber");
-	                    return new Instructor(id, name, surname, dob, phone, null);
-	                } catch (SQLException e) {
-	                    throw new RuntimeException(e); // Rejeter l'erreur SQL dans ce contexte
-	                }
-	            });
-
-	            // Ajouter l'accréditation si elle existe
-	            int accredId = rs.getInt("accred_id");
-	            if (!rs.wasNull()) { // Vérifier si l'accréditation est présente
-	                String accredName = rs.getString("accred_name");
-	                Accreditation accreditation = new Accreditation(accredId, accredName);
-	                instructor.addAccreditation(accreditation);
-	            }
-	        }
-
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-
-	    // Récupérer la liste des instructeurs à partir de la Map
-	    instructors.addAll(instructorMap.values());
-	    return instructors;
+		List<Instructor> instructors = new ArrayList<Instructor>();
+		
+		String query = "SELECT * "
+				+ "FROM INSTRUCTOR";
+		
+		try {
+			ResultSet res = connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
+					.executeQuery(query);
+			
+			while (res.next()) {
+				int instructorId = res.getInt("instructorid");
+				
+				List<Accreditation> instAccreditations = getAccredsInstructor(instructorId);
+			    
+				Instructor currInst = buildInstructor(res, instAccreditations.get(0));
+				
+				for(Accreditation curr:instAccreditations) {
+					if(!currInst.getInstructorAccreditations().contains(curr)) {
+						currInst.addAccreditation(curr);
+					}
+				}
+			
+				instructors.add(currInst);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return instructors;
 	}
 }

@@ -47,6 +47,7 @@ public class Instructor extends Person {
 		if (accreditations.isEmpty()) {
 	        return "Aucune";
 	    }
+		
 	    return accreditations.stream()
 	                         .map(Accreditation::getName)
 	                         .reduce((a, b) -> a + ", " + b)

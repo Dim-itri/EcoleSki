@@ -14,10 +14,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
-import be.marain.classes.Booking;
+
 import be.marain.classes.Instructor;
 import be.marain.classes.Lesson;
 import be.marain.classes.LessonType;
@@ -84,7 +83,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void resetFields() {
+	private void resetFields() {
 		tfMax.setText("");
 		tfMin.setText("");
 		dclessonDate.setDate(null);
@@ -96,7 +95,7 @@ public class LessonsJFrame extends JFrame {
 		rdbtnMorning.setSelected(false);
 	}
 	
-	public void handleClickTable(JTable table, LessonTableModel model) {
+	private void handleClickTable(JTable table, LessonTableModel model) {
 		table.getSelectionModel().addListSelectionListener(event -> {
 			resetFields();
 			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
@@ -124,7 +123,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleRdBtn1Hour() {
+	private void handleRdBtn1Hour() {
 		rdbtn1Hour.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -148,7 +147,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleRdBtnMorning() {
+	private void handleRdBtnMorning() {
 		rdbtnMorning.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -162,7 +161,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 
-	public void handleRdbtnAfternoon() {
+	private void handleRdbtnAfternoon() {
 		rdbtnAfternoon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -176,7 +175,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleCbLessonType() {
+	private void handleCbLessonType() {
 		cbLessonType.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -205,7 +204,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleChckBoxIsIndividual() {
+	private void handleChckBoxIsIndividual() {
 		chckbxIsIndividual.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -219,7 +218,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleCreateButton() {
+	private void handleCreateButton() {
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -253,7 +252,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleDeleteButton() {
+	private void handleDeleteButton() {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -273,7 +272,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleUpdateButton() {
+	private void handleUpdateButton() {
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -283,6 +282,7 @@ public class LessonsJFrame extends JFrame {
 					boolean isIndividual = chckbxIsIndividual.isSelected();
 					int duration = endHour - startHour;
 					LocalDate date = dclessonDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					
 					if(cbLessonType.getSelectedItem() != null) {
 						selectedLessonType = (LessonType)cbLessonType.getSelectedItem();
 						selectedLesson.setLessonType(selectedLessonType);
@@ -319,7 +319,7 @@ public class LessonsJFrame extends JFrame {
 		});
 	}
 	
-	public void initializeComponents() {
+	private void initializeComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1542, 784);
 		setTitle("Leçons");
@@ -470,5 +470,7 @@ public class LessonsJFrame extends JFrame {
 		handleCreateButton();
 		
 		handleDeleteButton();
+		
+		handleUpdateButton();
 	}
 }

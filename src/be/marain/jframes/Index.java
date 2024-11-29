@@ -48,7 +48,7 @@ public class Index extends JFrame {
 		tablePanel.add(btnHome);
 	}
 
-	public void handleSkierButton() {
+	private void handleSkierButton() {
 		displaySkiers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SkiersJFrame skiersJFrame = new SkiersJFrame();
@@ -58,7 +58,7 @@ public class Index extends JFrame {
 		});
 	}
 	
-	public void handleInstructorButton() {
+	private void handleInstructorButton() {
 		displayInstructors.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				InstructorsJFrame instructorsJFrame = new InstructorsJFrame();
@@ -68,7 +68,7 @@ public class Index extends JFrame {
 		});
 	}
 	
-	public void handleLessonButton() {
+	private void handleLessonButton() {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LessonsJFrame lessonsJFrame = new LessonsJFrame();
@@ -78,7 +78,7 @@ public class Index extends JFrame {
 		});
 	}
 
-	public void handleBookingButton() {
+	private void handleBookingButton() {
 		displayBookings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				BookingsJFrame bookingsJFrame = new BookingsJFrame();
@@ -88,7 +88,7 @@ public class Index extends JFrame {
 		});
 	}
 	
-	public void initializeComponents() {
+	private void initializeComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1365, 752);
 		contentPane = new JPanel();

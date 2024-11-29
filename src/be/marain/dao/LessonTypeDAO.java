@@ -49,16 +49,10 @@ public class LessonTypeDAO extends DAO<LessonType> {
 							+ " FROM lessontype lt "
 							+ "INNER JOIN accreditation a ON a.accreditationid = lt.accreditationid");
 			
-			while(resultSet.next()) {
-				int ltid = resultSet.getInt("ltid");
-				String lessonlevel = resultSet.getString("lessonlevel");
-				double price = resultSet.getDouble("price");
-				int accredId = resultSet.getInt("accreditationid");
-				String accredName = resultSet.getString("name");
-				int minAge = resultSet.getInt("minage");
-				int maxAge = resultSet.getInt("maxage");
+			while(resultSet.next()) {				
+				Accreditation newAccreditation = buildAccreditation(resultSet);
 				
-				LessonType newLessonType = new LessonType(ltid, lessonlevel, price, new Accreditation(accredId, accredName), minAge, maxAge);
+				LessonType newLessonType = buildLessonType(resultSet, newAccreditation);
 				
 				lessonTypes.add(newLessonType);
 			}

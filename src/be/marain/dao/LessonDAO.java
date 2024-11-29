@@ -1,15 +1,11 @@
 package be.marain.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import be.marain.classes.Accreditation;
 import be.marain.classes.Booking;
@@ -153,89 +149,51 @@ public class LessonDAO extends DAO<Lesson> {
 					+ "INNER JOIN period p ON p.periodid = b.periodid "
 					+ "WHERE b.lessonid = ?";
 			
-			
 			PreparedStatement statement = connect.prepareStatement(query);
          	ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                // Récupération des données de la table Lesson
                 int lessonId = resultSet.getInt("lessonId");
-                int minBookings = resultSet.getInt("minBookings");
-                int maxBookings = resultSet.getInt("maxBookings");
-                LocalDate lessonDate = resultSet.getDate("lessonDate").toLocalDate();
-                int startHour = resultSet.getInt("starthour");
-                int endHour = resultSet.getInt("endhour");
-                int duration = resultSet.getInt("duration");
-                boolean isIndividual;
+             
+                Accreditation LTaccreditation = buildAccreditation(resultSet);
+                LessonType lessonType = buildLessonType(resultSet, LTaccreditation);
+                                
+                Instructor instructor = buildInstructor(resultSet, LTaccreditation);
                 
-                if(resultSet.getString("isindividual").charAt(0) == 'Y') {
-                	isIndividual = true;
-                }else {
-                	isIndividual = false;
+                List<Accreditation> instructorAccreds = getAccredsInstructor(instructor.getPersonId());
+                
+                for(Accreditation curr:instructorAccreds) {
+                	if(!instructor.getInstructorAccreditations().contains(curr)) {
+                		instructor.addAccreditation(curr);
+                	}
                 }
-
-                // Récupération des données de la table Instructor
-                int instructorId = resultSet.getInt("instructorId");
-                String instructorName = resultSet.getString("name");
-                String instructorSurname = resultSet.getString("surname");
-                Date instructorDob = resultSet.getDate("dateofbirth");
-                int instructorPhone = resultSet.getInt("phonenumber");
-
-                // Récupération des données de la table LessonType
-                int lessonTypeId = resultSet.getInt("ltId");
-                String lessonLevel = resultSet.getString("lessonlevel");
-                double lessonPrice = resultSet.getDouble("price");
-                int minAge = resultSet.getInt("minage");
-                int maxAge = resultSet.getInt("maxAge");
-
-                // Récupération des données de la table Accreditation
-                int accreditationId = resultSet.getInt("accreditationid");
-                String accreditationName = resultSet.getString("nameAccred");
-                
-                // Création des objets
-                Accreditation accreditation = new Accreditation(accreditationId, accreditationName);
-                LessonType lessonType = new LessonType(lessonTypeId, lessonLevel, lessonPrice, accreditation, minAge, maxAge);
-                Instructor instructor = new Instructor(instructorId, instructorName, instructorSurname, 
-                                                        instructorDob.toLocalDate(), instructorPhone, accreditation);
-                     
-                // Création de la leçon
-                Lesson lesson = new Lesson(lessonId, minBookings, maxBookings, lessonDate, instructor, lessonType, isIndividual, startHour, endHour, duration);
+                               
+                Lesson lesson = buildLesson(resultSet, lessonType, instructor);
                 
                 PreparedStatement substmt = connect.prepareStatement(bookingQuery);
                 substmt.setInt(1, lessonId);
                 
                 ResultSet subRes = substmt.executeQuery();
                 
-                while(subRes.next()) {
-                	int bookingId = subRes.getInt("bookingid");
-                	LocalDate bookingDate = subRes.getDate("bookingdate").toLocalDate();
-                	boolean isInsured;
+                while(subRes.next()) {                	
+                	Skier skier = buildSkier(subRes);
                 	
-                	if(subRes.getString("isinsured").charAt(0) == 'Y') {
-                    	isInsured = true;
-                    }else {
-                    	isInsured = false;
-                    }
+                	List<Booking> skierBookings = findBookingsBySkier(skier.getPersonId());
                 	
-                	Skier skier = new Skier(subRes.getString("name"), subRes.getString("surname"), subRes.getDate("dateofbirth").toLocalDate(), Integer.parseInt(subRes.getString("phonenumber")));
+                	for(Booking curr:skierBookings) {
+                		if(!skier.getBookings().contains(curr)) {
+                			skier.addBooking(curr);
+                		}
+                	}
+                		
+                	Period period = buildPeriod(subRes);
                 	
-                	boolean isVacation;
-                	
-                	if(subRes.getString("isVacation").charAt(0) == 'Y') {
-                    	isVacation = true;
-                    }else {
-                    	isVacation = false;
-                    }
-                	
-                	
-                	Period period = new Period(subRes.getInt("periodid"), subRes.getDate("startdate").toLocalDate(), subRes.getDate("enddate").toLocalDate(), isVacation);
-                	
-                	Booking currBook = new Booking(bookingId, bookingDate, instructor, skier, lesson, period, isInsured);
+                	Booking currBook = buildBooking(subRes, skier, instructor, lesson, period);
                 	
                 	lesson.addBooking(currBook);
+                	skier.addBooking(currBook);
                 }
 
-                // Ajout de la leçon à la liste
                 lessons.add(lesson);
             }
         }catch (SQLException e) {

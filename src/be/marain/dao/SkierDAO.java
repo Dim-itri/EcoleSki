@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,15 +125,9 @@ public class SkierDAO extends DAO<Skier> {
 					+ "INNER JOIN lessontype lt ON lt.ltid = l.ltid "
 					+ "INNER JOIN accreditation a ON a.accreditationid = lt.accreditationid "
 					+ "WHERE b.skierid = ?";
-			
-			String AccredsInstQuery = "SELECT * FROM accreditation a "
-					+ "INNER JOIN instructoraccred ia ON ia.accreditationid = a.accreditationid "
-					+ "WHERE ia.instructorid = ?";
-			
+						
 			while (resultSet.next()) {
-				Skier currSkier = new Skier(resultSet.getInt("skierId"), resultSet.getString("name"),
-						resultSet.getString("surname"), resultSet.getDate("dateOfBirth").toLocalDate(),
-						resultSet.getInt("phoneNumber"));
+				Skier currSkier = buildSkier(resultSet);
 				
 				PreparedStatement statement = connect.prepareStatement(bookingQuery);
 				statement.setInt(1, currSkier.getPersonId());
@@ -142,68 +135,25 @@ public class SkierDAO extends DAO<Skier> {
 				ResultSet bookingRes = statement.executeQuery();
 				
 				//Booking
-				while(bookingRes.next()) {
-					int bookingId = bookingRes.getInt("bookingid");
-					LocalDate bookingDate = bookingRes.getDate("bookingdate").toLocalDate();
-					boolean isInsured;
+				while(bookingRes.next()) {					
+					Accreditation currAccred = buildAccreditation(bookingRes);
 					
-					if(bookingRes.getString("isInsured").charAt(0) == 'Y') {
-	                	isInsured = true;
-	                }else {
-	                	isInsured= false;
-	                }	
-					
-					Accreditation currAccred = new Accreditation(bookingRes.getInt("accreditationid"), bookingRes.getString("name"));
-					
-					LessonType currLT = new LessonType(bookingRes.getInt("ltid"), bookingRes.getString("lessonlevel"), bookingRes.getDouble("price"), currAccred, bookingRes.getInt("minage"), 
-							bookingRes.getInt("maxage"));
+					LessonType currLT = buildLessonType(bookingRes, currAccred);
 					
 					//Accreds for instructor
-					PreparedStatement accredsInstStatement = connect.prepareStatement(AccredsInstQuery);
-					accredsInstStatement.setInt(1, bookingRes.getInt("instructorid"));
+					List<Accreditation> accredsInst = getAccredsInstructor(bookingRes.getInt("accreditationid"));
 					
-					ResultSet accredInstRes = accredsInstStatement.executeQuery();
-					
-					List<Accreditation> accredsInst = new ArrayList<Accreditation>();
-					
-					while(accredInstRes.next()) {
-						int currAccredId = accredInstRes.getInt("accreditationid");
-						String currAccredName = accredInstRes.getString("name");
-						
-						Accreditation currInstAccred = new Accreditation(currAccredId, currAccredName);
-						
-						accredsInst.add(currInstAccred);
-					}
-					
-					Instructor currInst = new Instructor(bookingRes.getInt("instructorid"), bookingRes.getString("name"), bookingRes.getString("surname"), 
-							bookingRes.getDate("dateofbirth").toLocalDate(), Integer.parseInt(bookingRes.getString("phonenumber")),  accredsInst.get(0));;
+					Instructor currInst = buildInstructor(bookingRes, currAccred);
 				
 					for(int i= 1;i<accredsInst.size();i++) {
 						currInst.addAccreditation(accredsInst.get(i));
 					}
+										
+					Lesson currLesson = buildLesson(bookingRes, currLT, currInst);
 					
-					boolean isIndividual;
+					Period p = buildPeriod(bookingRes);
 					
-					if(bookingRes.getString("isindividual").charAt(0) == 'Y') {
-	                	isIndividual = true;
-	                }else {
-	                	isIndividual = false;
-	                }
-					
-					Lesson currLesson = new Lesson(bookingRes.getInt("lessonid"), bookingRes.getInt("minBookings"), bookingRes.getInt("maxbookings"), bookingRes.getDate("lessondate").toLocalDate(), 
-							currInst, currLT, isIndividual, bookingRes.getInt("starthour"), bookingRes.getInt("endhour"), bookingRes.getInt("duration"));
-					
-					boolean isVacation;
-					
-					if(bookingRes.getString("isVacation").charAt(0) == 'Y') {
-	                	isVacation = true;
-	                }else {
-	                	isVacation = false;
-	                }
-					
-					Period p = new Period(bookingRes.getInt("periodid"), bookingRes.getDate("startdate").toLocalDate(), bookingRes.getDate("enddate").toLocalDate(), isVacation);
-					
-					Booking currBooking = new Booking( bookingId, bookingDate, currInst, currSkier, currLesson, p, isInsured);
+					Booking currBooking = buildBooking(bookingRes, currSkier, currInst, currLesson, p);
 					
 					currSkier.addBooking(currBooking);
 				}

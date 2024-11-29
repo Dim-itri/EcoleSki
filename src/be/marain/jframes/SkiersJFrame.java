@@ -60,9 +60,6 @@ public class SkiersJFrame extends JFrame {
 	JButton btnDelete;
 	JButton btnUpdate;
 	
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -76,7 +73,7 @@ public class SkiersJFrame extends JFrame {
 		});
 	}
 	
-	public void resetSelectedSkier() {
+	private void resetSelectedSkier() {
 		surnameTF.setText("");
 		nameTF.setText("");
 		phoneTF.setText("");
@@ -86,7 +83,7 @@ public class SkiersJFrame extends JFrame {
 		selectedSkier = null;
 	}
 	
-	public void handleClick() {
+	private void handleClick() {
 		table.getSelectionModel().addListSelectionListener(event -> {
 			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
 				selectedRow = table.getSelectedRow();
@@ -101,7 +98,7 @@ public class SkiersJFrame extends JFrame {
 		});
 	}
 	
-	public void handleCreateButton() {
+	private void handleCreateButton() {
 		btnCreateSkier.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {	
 				try {
@@ -123,13 +120,14 @@ public class SkiersJFrame extends JFrame {
 				catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(null, ex.getMessage());
 				}catch (Exception e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
+					
+					JOptionPane.showMessageDialog(null, e2.getMessage() + "ici");
 				}
 			}
 		});
 	}
 	
-	public void handleDeleteButton() {
+	private void handleDeleteButton() {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -141,7 +139,7 @@ public class SkiersJFrame extends JFrame {
 				}catch(NullPointerException ex) {
 					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un skieur");
 				}catch (IndexOutOfBoundsException e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
+					JOptionPane.showMessageDialog(null, e2.getMessage()); 
 				}catch (Exception e2) {
 					JOptionPane.showMessageDialog(null, e2.getMessage());
 				}
@@ -149,7 +147,7 @@ public class SkiersJFrame extends JFrame {
 		});
 	}
 	
-	public void handleUpdateButton() {
+	private void handleUpdateButton() {
 		btnUpdate.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -181,7 +179,7 @@ public class SkiersJFrame extends JFrame {
 	}
 	
 	
-	public void initializeComponents() {
+	private void initializeComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1300, 767);
 		contentPane = new JPanel();

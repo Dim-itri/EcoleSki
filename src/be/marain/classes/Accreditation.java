@@ -49,6 +49,6 @@ public class Accreditation {
 	
 	@Override
 	public int hashCode() {
-	    return Objects.hash(accreditationId); // Utilise l'attribut unique pour générer le hashCode
+	    return Objects.hash(accreditationId);
 	}
 }

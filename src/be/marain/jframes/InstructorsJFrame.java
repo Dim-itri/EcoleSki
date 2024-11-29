@@ -71,7 +71,7 @@ public class InstructorsJFrame extends JFrame {
 		});
 	}
 	
-	public void resetFields() {
+	private void resetFields() {
 		tfName.setText("");
 		tfPhone.setText("");
 		tfSurname.setText("");
@@ -81,7 +81,7 @@ public class InstructorsJFrame extends JFrame {
 		selectedInstructor = null;
 	}
 	
-	public void handleClick() {
+	private void handleClick() {
 		table.getSelectionModel().addListSelectionListener(event -> {
 			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
 				selectedRow = table.getSelectedRow();
@@ -96,7 +96,7 @@ public class InstructorsJFrame extends JFrame {
 		});
 	}
 
-	public void handleCreateButton() {
+	private void handleCreateButton() {
 		btnCreation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -120,6 +120,7 @@ public class InstructorsJFrame extends JFrame {
 				}catch (IllegalArgumentException e2) {
 					JOptionPane.showMessageDialog(null, e2.getMessage());
 				}catch (NullPointerException e2) {
+					System.out.println("ici");
 					JOptionPane.showMessageDialog(null, e2.getMessage());
 				}catch (Exception e2) {
 					JOptionPane.showMessageDialog(null, e2.getMessage());
@@ -128,7 +129,7 @@ public class InstructorsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleDeleteButton() {
+	private void handleDeleteButton() {
 		btnDeletion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -148,7 +149,7 @@ public class InstructorsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleUpdateButton() {
+	private void handleUpdateButton() {
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -185,7 +186,7 @@ public class InstructorsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleAddAccred() {
+	private void handleAddAccred() {
 		btnAddAccred.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Accreditation selectedAccreditation = (Accreditation)accredCB.getSelectedItem();
@@ -197,7 +198,7 @@ public class InstructorsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleDeleteAccred() {
+	private void handleDeleteAccred() {
 		btnDeleteAccred.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Accreditation selectedAccreditation = (Accreditation)accredCB.getSelectedItem();
@@ -209,7 +210,7 @@ public class InstructorsJFrame extends JFrame {
 		});
 	}
 	
-	public void initializeComponents() {
+	private void initializeComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1299, 763);
 		contentPane = new JPanel();

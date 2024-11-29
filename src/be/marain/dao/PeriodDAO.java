@@ -3,7 +3,6 @@ package be.marain.dao;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,19 +46,8 @@ public class PeriodDAO extends DAO<Period>{
 			
 			ResultSet res = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(query);
 			
-			while(res.next()) {
-				int periodid = res.getInt("periodid");
-				LocalDate startDate = res.getDate("startdate").toLocalDate();
-				LocalDate enddate = res.getDate("enddate").toLocalDate();
-				boolean isVacation;
-            	
-            	if(res.getString("isVacation").charAt(0) == 'Y') {
-                	isVacation = true;
-                }else {
-                	isVacation = false;
-                }
-				
-				Period period = new Period(periodid, startDate, enddate, isVacation);
+			while(res.next()) {				
+				Period period = buildPeriod(res);
 				
 				periods.add(period);
 			}

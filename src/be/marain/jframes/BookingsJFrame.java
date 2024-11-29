@@ -66,14 +66,14 @@ public class BookingsJFrame extends JFrame {
 		});
 	}
 	
-	public void resetFields() {
+	private void resetFields() {
 		selectedLesson = null;
 		selectedSkier = null;
 		cbLesson.removeAllItems();
 		chckbxInsurance.setSelected(false);
 	}
 	
-	public void handleCbLesson() {
+	private void handleCbLesson() {
 		cbLesson.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -82,7 +82,7 @@ public class BookingsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleCbSkier() {
+	private void handleCbSkier() {
 		cbSkier.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -98,7 +98,7 @@ public class BookingsJFrame extends JFrame {
 		});
 	}
 	
-	public void handleCreateButton() {
+	private void handleCreateButton() {
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
 				try {
@@ -134,7 +134,7 @@ public class BookingsJFrame extends JFrame {
 		});
 	}
 	
-	public void initializeComponents() {
+	private void initializeComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1385, 769);
 		contentPane = new JPanel();
