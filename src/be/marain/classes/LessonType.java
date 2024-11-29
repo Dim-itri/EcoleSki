@@ -77,7 +77,7 @@ public class LessonType {
 	
 	@Override
 	public String toString() {
-		return "Niveau : " + level + ", Prix : " + price;
+		return "Accred : " + accreditation.getName()+ ",Niveau : " + level + ",Prix : " + price;
 	}
 	
 	@Override
