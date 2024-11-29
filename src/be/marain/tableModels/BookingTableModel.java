@@ -5,6 +5,8 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import be.marain.classes.Booking;
+import be.marain.classes.Lesson;
+import be.marain.jframes.LessonsJFrame;
 
 public class BookingTableModel extends AbstractTableModel{
 	private static final long serialVersionUID = 1L;
@@ -15,6 +17,15 @@ public class BookingTableModel extends AbstractTableModel{
 		if(newBooking != null) {
 			bookings.add(newBooking);
 			fireTableRowsInserted(getRowCount()-1, getRowCount()-1);
+		}
+	}
+	
+	public void deleteBooking(int rowIndex) {
+		if(rowIndex >= 0 && rowIndex < bookings.size()) {
+			bookings.remove(rowIndex);
+			fireTableRowsDeleted(rowIndex, rowIndex);
+		}else {
+			throw new IllegalArgumentException("Impossible de supprimer la réservation à l'index : "+ rowIndex);
 		}
 	}
 	
@@ -37,6 +48,10 @@ public class BookingTableModel extends AbstractTableModel{
 	@Override
 	public String getColumnName(int column) {
 		return columnNames[column];
+	}
+	
+	public Booking getBookingAt(int rowIndex) {
+		return bookings.get(rowIndex);
 	}
 
 	@Override

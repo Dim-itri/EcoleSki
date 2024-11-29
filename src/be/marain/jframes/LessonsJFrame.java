@@ -122,7 +122,7 @@ public class LessonsJFrame extends JFrame {
 			}
 		});
 	}
-	
+
 	private void handleRdBtn1Hour() {
 		rdbtn1Hour.addActionListener(new ActionListener() {
 			@Override

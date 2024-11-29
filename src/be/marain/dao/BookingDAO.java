@@ -62,9 +62,21 @@ public class BookingDAO extends DAO<Booking> {
 	}
 
 	@Override
-	public boolean delete(Booking obj) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean delete(Booking booking) {
+		boolean success;
+		String query = "DELETE FROM booking WHERE bookingid = ?";
+		
+		try {
+			PreparedStatement statement = connect.prepareStatement(query);
+			statement.setInt(1, booking.getBookingId());
+			
+			success = statement.executeUpdate() > 0;
+		} catch (SQLException e) {
+			success = false;
+			e.printStackTrace();
+		}
+		
+		return success;
 	}
 
 	@Override

@@ -92,6 +92,10 @@ public class Booking {
 		return dao.create(this);
 	}
 	
+	public boolean deleteBooking(BookingDAO dao) {
+		return dao.delete(this);
+	}
+	
 	public static List<Booking> getAllBookings(BookingDAO dao){
 		return dao.findAll();
 	}

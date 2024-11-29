@@ -52,6 +52,9 @@ public class BookingsJFrame extends JFrame {
 	JTable table;
 	JScrollPane scrollPane;
 	JButton btnCreate;
+	int selectedRow;
+	Booking selectedBooking;
+	JButton btnDelete;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -71,6 +74,21 @@ public class BookingsJFrame extends JFrame {
 		selectedSkier = null;
 		cbLesson.removeAllItems();
 		chckbxInsurance.setSelected(false);
+	}
+	
+	private void handleClick() {
+		table.getSelectionModel().addListSelectionListener(event -> {
+			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+				selectedRow = table.getSelectedRow();
+				selectedBooking = model.getBookingAt(selectedRow);
+				selectedLesson = selectedBooking.getLesson();
+				selectedSkier = selectedBooking.getSkier();
+								
+				chckbxInsurance.setSelected(selectedBooking.getIsInsured());
+				cbSkier.setSelectedItem(selectedSkier);
+				cbLesson.setSelectedItem(selectedLesson);
+			}
+		});
 	}
 	
 	private void handleCbLesson() {
@@ -134,6 +152,26 @@ public class BookingsJFrame extends JFrame {
 		});
 	}
 	
+	public void handleDeleteButton() {
+		btnDelete.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(selectedBooking.deleteBooking(bookingDAO)) {
+						model.deleteBooking(selectedRow);
+						JOptionPane.showMessageDialog(null, "Réservation supprimée avec succès");
+					}
+				}catch (NullPointerException e2) {
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner une réservation");
+				}catch (IndexOutOfBoundsException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+	}
+	
 	private void initializeComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1385, 769);
@@ -189,6 +227,10 @@ public class BookingsJFrame extends JFrame {
 		btnCreate.setBounds(10, 335, 89, 23);
 		tablePanel.add(btnCreate);
 		
+		btnDelete = new JButton("Supprimer");
+		btnDelete.setBounds(114, 335, 89, 23);
+		tablePanel.add(btnDelete);
+		
 		JLabel lblSkier = new JLabel("Skieur");
 		lblSkier.setBounds(10, 195, 46, 14);
 		tablePanel.add(lblSkier);
@@ -208,10 +250,14 @@ public class BookingsJFrame extends JFrame {
 		
 		initializeComponents();
 		
+		handleClick();
+		
 		handleCbLesson();
 		
 		handleCbSkier();
 		
 		handleCreateButton();
+		
+		handleDeleteButton();
 	}
 }
