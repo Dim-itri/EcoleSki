@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -136,56 +138,55 @@ public class InstructorDAO extends DAO<Instructor> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public List<Instructor> findAll() {
-		List<Instructor> instructors = new ArrayList<>();
-		
-		try {
-			ResultSet resultSet = this.connect
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT * FROM instructor");
-			
-			while(resultSet.next()) {
-				int currId = resultSet.getInt("instructorid");
-				String currNameString = resultSet.getString("name");
-				String currSurnameString = resultSet.getString("surname");
-				LocalDate currDobDate = resultSet.getDate("dateofbirth").toLocalDate();
-				int currPhoneNumber = resultSet.getInt("phonenumber");
-				List<Accreditation> currAccreds = new ArrayList<Accreditation>();
-				
-				//Getting accreditations
-				PreparedStatement statement = connect.prepareStatement
-								("SELECT * FROM accreditation a "
-								+ "INNER JOIN InstructorAccred ia ON ia.accreditationid = a.accreditationid "
-								+ "WHERE ia.instructorid = ?");
-				
-				statement.setInt(1, currId);
-				
-				ResultSet accredRes = statement.executeQuery();
-				
-				while(accredRes.next()) {
-					Accreditation currAccreditation = new Accreditation(accredRes.getInt("accreditationId"), accredRes.getString("name"));
-					
-					currAccreds.add(currAccreditation);
-				}
-				
-				Instructor currInstructor = new Instructor(currId, currNameString, currSurnameString, currDobDate, currPhoneNumber, currAccreds.isEmpty() ? 
-		                new Accreditation(0, "Accréditation par défaut") : currAccreds.get(0));
-				
-				for (int i = 1; i < currAccreds.size(); i++) {
-	                currInstructor.addAccreditation(currAccreds.get(i));
+	    List<Instructor> instructors = new ArrayList<>();
+	    Map<Integer, Instructor> instructorMap = new HashMap<>(); // Map temporaire pour éviter les doublons d'instructeurs
+
+	    String query = """
+	        SELECT i.instructorid, i.name, i.surname, i.dateofbirth, i.phonenumber,
+	               a.accreditationid AS accred_id, a.name AS accred_name
+	        FROM instructor i
+	        LEFT JOIN InstructorAccred ia ON i.instructorid = ia.instructorid
+	        LEFT JOIN accreditation a ON ia.accreditationid = a.accreditationid
+	        ORDER BY i.instructorid
+	    """;
+
+	    try (PreparedStatement stmt = connect.prepareStatement(query);
+	         ResultSet rs = stmt.executeQuery()) {
+
+	        while (rs.next()) {
+	            int instructorId = rs.getInt("instructorid");
+
+	            // Si l'instructeur n'est pas encore dans la Map, on le crée
+	            Instructor instructor = instructorMap.computeIfAbsent(instructorId, id -> {
+	                try {
+	                    String name = rs.getString("name");
+	                    String surname = rs.getString("surname");
+	                    LocalDate dob = rs.getDate("dateofbirth").toLocalDate();
+	                    int phone = rs.getInt("phonenumber");
+	                    return new Instructor(id, name, surname, dob, phone, null);
+	                } catch (SQLException e) {
+	                    throw new RuntimeException(e); // Rejeter l'erreur SQL dans ce contexte
+	                }
+	            });
+
+	            // Ajouter l'accréditation si elle existe
+	            int accredId = rs.getInt("accred_id");
+	            if (!rs.wasNull()) { // Vérifier si l'accréditation est présente
+	                String accredName = rs.getString("accred_name");
+	                Accreditation accreditation = new Accreditation(accredId, accredName);
+	                instructor.addAccreditation(accreditation);
 	            }
-								
-				instructors.add(currInstructor);
-				
-				statement.close();
-				accredRes.close();
-			}
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return instructors;
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    // Récupérer la liste des instructeurs à partir de la Map
+	    instructors.addAll(instructorMap.values());
+	    return instructors;
 	}
 }

@@ -7,8 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 import be.marain.classes.Accreditation;
 import be.marain.classes.Booking;
@@ -129,7 +130,7 @@ public class LessonDAO extends DAO<Lesson> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public List<Lesson> findAll() {
 		List<Lesson> lessons = new ArrayList<Lesson>();

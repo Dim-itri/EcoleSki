@@ -43,7 +43,23 @@ public class SkiersJFrame extends JFrame {
 	private Skier selectedSkier;
 	private int selectedRow;
 	private JDateChooser dobChooser;
-
+	List<Skier> skiers;
+	JPanel tablePanel;
+	SkierTableModel model;
+	JTable table;
+	JScrollPane scrollPane;
+	JLabel surnameLabel;
+	JLabel nameLabel;
+	JLabel dobLabel;
+	JLabel phoneLabel;
+	JLabel surnameELabel;
+	JLabel nameELabel;
+	JLabel dobELabel;
+	JLabel phoneELabel;
+	JButton btnCreateSkier;
+	JButton btnDelete;
+	JButton btnUpdate;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -69,39 +85,8 @@ public class SkiersJFrame extends JFrame {
 		selectedRow = -1;
 		selectedSkier = null;
 	}
-	/**
-	 * Create the frame.
-	 */	
-	public SkiersJFrame() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1300, 767);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setTitle("Skieurs");
-
-		setContentPane(contentPane);
-
-		JPanel tablePanel = new JPanel();
-		tablePanel.setBounds(5, 5, 1293, 739);
-		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-
-		// Handling table of skiers
-		List<Skier> skiers = Skier.getAllSkiers(skierDao);
-
-		SkierTableModel model = new SkierTableModel(skiers);
-		contentPane.setLayout(null);
-		tablePanel.setLayout(null);
-
-		JTable table = new JTable(model);
-
-		JScrollPane scrollPane = new JScrollPane(table);
-
-		scrollPane.setBounds(821, 20, 452, 699);
-
-		tablePanel.add(scrollPane);
-		contentPane.add(tablePanel);
-		
-		//Handling click on a row from the table
+	
+	public void handleClick() {
 		table.getSelectionModel().addListSelectionListener(event -> {
 			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
 				selectedRow = table.getSelectedRow();
@@ -114,71 +99,9 @@ public class SkiersJFrame extends JFrame {
 				dobChooser.setDate(Date.from(selectedSkier.getDateOfBirth().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 			}
 		});
-		
-		JLabel surnameLabel = new JLabel("Nom");
-		surnameLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		surnameLabel.setBounds(88, 76, 127, 29);
-		tablePanel.add(surnameLabel);
-		
-		JLabel nameLabel = new JLabel("Prénom");
-		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		nameLabel.setBounds(88, 151, 127, 29);
-		tablePanel.add(nameLabel);
-		
-		JLabel dobLabel = new JLabel("Date de naissance");
-		dobLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		dobLabel.setBounds(88, 226, 127, 29);
-		tablePanel.add(dobLabel);
-		
-		JLabel phoneLabel = new JLabel("Téléphone");
-		phoneLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		phoneLabel.setBounds(88, 301, 127, 29);
-		tablePanel.add(phoneLabel);
-		
-		JLabel surnameELabel = new JLabel("");
-		surnameELabel.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		surnameELabel.setForeground(new Color(255, 0, 0));
-		surnameELabel.setBounds(261, 112, 214, 19);
-		tablePanel.add(surnameELabel);
-		
-		JLabel nameELabel = new JLabel("");
-		nameELabel.setForeground(new Color(255, 0, 0));
-		nameELabel.setBackground(new Color(240, 240, 240));
-		nameELabel.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		nameELabel.setBounds(261, 187, 214, 19);
-		tablePanel.add(nameELabel);
-		
-		JLabel dobELabel = new JLabel("");
-		dobELabel.setForeground(new Color(255, 0, 0));
-		dobELabel.setBounds(261, 262, 214, 19);
-		tablePanel.add(dobELabel);
-		
-		JLabel phoneELabel = new JLabel("");
-		phoneELabel.setForeground(new Color(255, 0, 0));
-		phoneELabel.setBounds(261, 337, 214, 19);
-		tablePanel.add(phoneELabel);
-		
-		surnameTF = new JTextField();
-		surnameTF.setBounds(261, 83, 133, 19);
-		tablePanel.add(surnameTF);
-		surnameTF.setColumns(10);
-		
-		nameTF = new JTextField();
-		nameTF.setBounds(261, 158, 133, 19);
-		tablePanel.add(nameTF);
-		nameTF.setColumns(10);
-		
-		phoneTF = new JTextField();
-		phoneTF.setBounds(261, 308, 133, 19);
-		tablePanel.add(phoneTF);
-		phoneTF.setColumns(10);
-		
-		dobChooser = new JDateChooser();
-		dobChooser.setBounds(261, 236, 133, 19);
-		tablePanel.add(dobChooser);
-		
-		//User creation
-		JButton btnCreateSkier = new JButton("Créer");
+	}
+	
+	public void handleCreateButton() {
 		btnCreateSkier.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {	
 				try {
@@ -204,12 +127,9 @@ public class SkiersJFrame extends JFrame {
 				}
 			}
 		});
-		
-		btnCreateSkier.setBounds(88, 393, 127, 21);
-		tablePanel.add(btnCreateSkier);
-		
-		//User deletion	
-		JButton btnDelete = new JButton("Supprimer");
+	}
+	
+	public void handleDeleteButton() {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -227,12 +147,9 @@ public class SkiersJFrame extends JFrame {
 				}
 			}
 		});
-		
-		btnDelete.setBounds(232, 392, 127, 23);
-		tablePanel.add(btnDelete);
-		
-		//Update skier
-		JButton btnUpdate = new JButton("Modifier");
+	}
+	
+	public void handleUpdateButton() {
 		btnUpdate.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -261,18 +178,126 @@ public class SkiersJFrame extends JFrame {
 				}
 			}
 		});
+	}
+	
+	
+	public void initializeComponents() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1300, 767);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setTitle("Skieurs");
+
+		setContentPane(contentPane);
+
+		tablePanel = new JPanel();
+		tablePanel.setBounds(5, 5, 1293, 739);
+		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+		model = new SkierTableModel(skiers);
+		contentPane.setLayout(null);
+		tablePanel.setLayout(null);
+
+		table = new JTable(model);
+
+		scrollPane = new JScrollPane(table);
+
+		scrollPane.setBounds(821, 20, 452, 699);
+
+		tablePanel.add(scrollPane);
+		contentPane.add(tablePanel);
+		
+		surnameLabel = new JLabel("Nom");
+		surnameLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		surnameLabel.setBounds(88, 76, 127, 29);
+		tablePanel.add(surnameLabel);
+		
+		nameLabel = new JLabel("Prénom");
+		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		nameLabel.setBounds(88, 151, 127, 29);
+		tablePanel.add(nameLabel);
+		
+		dobLabel = new JLabel("Date de naissance");
+		dobLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		dobLabel.setBounds(88, 226, 127, 29);
+		tablePanel.add(dobLabel);
+		
+		phoneLabel = new JLabel("Téléphone");
+		phoneLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		phoneLabel.setBounds(88, 301, 127, 29);
+		tablePanel.add(phoneLabel);
+		
+		surnameELabel = new JLabel("");
+		surnameELabel.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		surnameELabel.setForeground(new Color(255, 0, 0));
+		surnameELabel.setBounds(261, 112, 214, 19);
+		tablePanel.add(surnameELabel);
+		
+		nameELabel = new JLabel("");
+		nameELabel.setForeground(new Color(255, 0, 0));
+		nameELabel.setBackground(new Color(240, 240, 240));
+		nameELabel.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		nameELabel.setBounds(261, 187, 214, 19);
+		tablePanel.add(nameELabel);
+		
+		dobELabel = new JLabel("");
+		dobELabel.setForeground(new Color(255, 0, 0));
+		dobELabel.setBounds(261, 262, 214, 19);
+		tablePanel.add(dobELabel);
+		
+		phoneELabel = new JLabel("");
+		phoneELabel.setForeground(new Color(255, 0, 0));
+		phoneELabel.setBounds(261, 337, 214, 19);
+		tablePanel.add(phoneELabel);
+		
+		surnameTF = new JTextField();
+		surnameTF.setBounds(261, 83, 133, 19);
+		tablePanel.add(surnameTF);
+		surnameTF.setColumns(10);
+		
+		nameTF = new JTextField();
+		nameTF.setBounds(261, 158, 133, 19);
+		tablePanel.add(nameTF);
+		nameTF.setColumns(10);
+		
+		phoneTF = new JTextField();
+		phoneTF.setBounds(261, 308, 133, 19);
+		tablePanel.add(phoneTF);
+		phoneTF.setColumns(10);
+		
+		dobChooser = new JDateChooser();
+		dobChooser.setBounds(261, 236, 133, 19);
+		tablePanel.add(dobChooser);
+		
+		//User creation
+		btnCreateSkier = new JButton("Créer");	
+		btnCreateSkier.setBounds(88, 393, 127, 21);
+		tablePanel.add(btnCreateSkier);
+		
+		
+		btnDelete = new JButton("Supprimer");	
+		btnDelete.setBounds(232, 392, 127, 23);
+		tablePanel.add(btnDelete);
+				
+				
+		btnUpdate = new JButton("Modifier");
 		btnUpdate.setBounds(369, 392, 127, 23);
 		tablePanel.add(btnUpdate);
 		
-		JButton btnHome = new JButton("Accueil");
-		btnHome.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Index index = new Index();
-				dispose();
-				index.setVisible(true);
-			}
-		});
-		btnHome.setBounds(10, 696, 89, 23);
-		tablePanel.add(btnHome);
+		Index.createHomeButton(tablePanel);
+	}
+	 
+	public SkiersJFrame() {
+		skiers = Skier.getAllSkiers(skierDao);
+		
+		initializeComponents();
+		
+		handleClick();
+		
+		handleCreateButton();
+		
+		handleDeleteButton();
+		
+		handleUpdateButton();
 	}
 }

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +109,7 @@ public class BookingDAO extends DAO<Booking> {
 			
 			
 			while(res.next()) {
-				// Récupération des données de booking
+
                 int bookingId = res.getInt("bookingid");
                 LocalDate bookingDate = res.getDate("bookingDate").toLocalDate();
                 boolean isinsured;
@@ -119,19 +120,19 @@ public class BookingDAO extends DAO<Booking> {
                 	isinsured= false;
                 }
                 
-                // Récupération des données de skier
+
                 int skierId = res.getInt("skierid");
                 String skierName = res.getString("skier_name");
                 String skierSurname = res.getString("skier_surname");
                 LocalDate skierDob = res.getDate("skier_dob").toLocalDate();
                 int skierPhone = Integer.parseInt(res.getString("skier_phone"));
 
-                // Récupération des données de period
+
                 int periodId = res.getInt("periodid");
                 LocalDate startDate = res.getDate("startdate").toLocalDate();
                 LocalDate endDate = res.getDate("enddate").toLocalDate();
 
-                // Récupération des données de lesson
+
                 int lessonId = res.getInt("lessonid");
                 int minBookings = res.getInt("minbookings");
                 int maxBookings = res.getInt("maxbookings");
@@ -148,14 +149,13 @@ public class BookingDAO extends DAO<Booking> {
                 }
 
 
-                // Récupération des données de instructor
                 int instructorId = res.getInt("instructorid");
                 String instructorName = res.getString("instructor_name");
                 String instructorSurname = res.getString("instructor_surname");
                 int instructorPhone = Integer.parseInt(res.getString("instructor_phone"));
                 LocalDate instructorDob = res.getDate("instructor_dob").toLocalDate();
                 
-                //Getting accreditation for lesson type
+                
                 int accredid = res.getInt("accreditationid");
                 String accredName = res.getString("accred_name");
                 
@@ -193,9 +193,9 @@ public class BookingDAO extends DAO<Booking> {
                 
                 Skier currSkier = skierMap.get(skierId);
                 if (currSkier == null) {
-                    // Si le skieur n'existe pas encore, on le crée
+                    
                     currSkier = new Skier(skierId, skierName, skierSurname, skierDob, skierPhone);
-                    skierMap.put(skierId, currSkier); // On ajoute le skieur au Map
+                    skierMap.put(skierId, currSkier);
                 }
                 
                 Period currPeriod = new Period(periodId, startDate, endDate, true);

@@ -22,6 +22,7 @@ public class Booking {
 		setLesson(lesson);
 		setPeriod(period);
 		setSkier(skier);
+		setIsInsured(insured);
 	}
 	
 	public double calculatePrice() {

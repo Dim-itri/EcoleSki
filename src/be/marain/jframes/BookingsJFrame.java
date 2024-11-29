@@ -43,10 +43,16 @@ public class BookingsJFrame extends JFrame {
 	JCheckBox chckbxInsurance;
 	JComboBox<Skier> cbSkier;
 	JComboBox<Lesson> cbLesson;
-
-	/**
-	 * Launch the application.
-	 */
+	List<Booking> bookings;
+	List<Lesson> lessons;
+	List<Skier> skiers;
+	List<Period> periods;
+	JPanel tablePanel;
+	BookingTableModel model;
+	JTable table;
+	JScrollPane scrollPane;
+	JButton btnCreate;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -66,83 +72,17 @@ public class BookingsJFrame extends JFrame {
 		cbLesson.removeAllItems();
 		chckbxInsurance.setSelected(false);
 	}
-
-	/**
-	 * Create the frame.
-	 */
-	public BookingsJFrame() {
-		List<Booking> bookings = Booking.getAllBookings(bookingDAO);
-		List<Lesson> lessons = Lesson.getAllLessons(lessonDAO);
-		List<Skier> skiers = Skier.getAllSkiers(skierDAO);
-		List<Period> periods = Period.getAllPeriods(periodDAO);
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1385, 769);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		JPanel tablePanel = new JPanel();
-		tablePanel.setBounds(5, 5, 1373, 725);
-		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-		tablePanel.setLayout(null);
-		
-		BookingTableModel model = new BookingTableModel(bookings);
-		
-		JTable table = new JTable(model);
-		table.setFillsViewportHeight(true);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
-		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(407, 11, 953, 699);
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);	
-		tablePanel.add(scrollPane);
-		contentPane.add(tablePanel);
-		
-		for (int column = 0; column < table.getColumnCount(); column++) {
-		    TableColumn tableColumn = table.getColumnModel().getColumn(column);
-		    tableColumn.setPreferredWidth(300);
-		}	
-		
-		JButton btnHome = new JButton("Accueil");
-		btnHome.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Index index = new Index();		
-				index.setVisible(true);
-				dispose();
-			}
-		});
-		btnHome.setBounds(10, 687, 89, 23);
-		tablePanel.add(btnHome);
-		
-		JLabel lblLesson = new JLabel("Leçon");
-		lblLesson.setBounds(10, 224, 46, 14);
-		tablePanel.add(lblLesson);
-		
-		chckbxInsurance = new JCheckBox("");
-		chckbxInsurance.setBounds(94, 159, 93, 21);
-		tablePanel.add(chckbxInsurance);
-		
-		cbLesson = new JComboBox<Lesson>();
-		cbLesson.setBounds(94, 220, 257, 22);
-		tablePanel.add(cbLesson);
-		
+	
+	public void handleCbLesson() {
 		cbLesson.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				selectedLesson = (Lesson)cbLesson.getSelectedItem();
 			}
 		});
-		
-		cbSkier = new JComboBox<Skier>();
-		for(int i=0;i<skiers.size();i++) {
-			cbSkier.addItem(skiers.get(i));
-		}
-		cbSkier.setBounds(94, 191, 257, 22);
-		tablePanel.add(cbSkier);
-		
+	}
+	
+	public void handleCbSkier() {
 		cbSkier.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -156,10 +96,11 @@ public class BookingsJFrame extends JFrame {
 				}
 			}
 		});
-		
-		JButton btnCreate = new JButton("Créer");
+	}
+	
+	public void handleCreateButton() {
 		btnCreate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {				
 				try {
 					Period period = null;
 					
@@ -191,6 +132,60 @@ public class BookingsJFrame extends JFrame {
 				
 			}
 		});
+	}
+	
+	public void initializeComponents() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1385, 769);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		tablePanel = new JPanel();
+		tablePanel.setBounds(5, 5, 1373, 725);
+		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+		tablePanel.setLayout(null);
+		
+		model = new BookingTableModel(bookings);
+		
+		table = new JTable(model);
+		table.setFillsViewportHeight(true);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		scrollPane = new JScrollPane(table);
+		scrollPane.setBounds(407, 11, 953, 699);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);	
+		tablePanel.add(scrollPane);
+		contentPane.add(tablePanel);
+		
+		for (int column = 0; column < table.getColumnCount(); column++) {
+		    TableColumn tableColumn = table.getColumnModel().getColumn(column);
+		    tableColumn.setPreferredWidth(300);
+		}	
+		
+		
+		JLabel lblLesson = new JLabel("Leçon");
+		lblLesson.setBounds(10, 224, 46, 14);
+		tablePanel.add(lblLesson);
+		
+		chckbxInsurance = new JCheckBox("");
+		chckbxInsurance.setBounds(94, 159, 93, 21);
+		tablePanel.add(chckbxInsurance);
+		
+		cbLesson = new JComboBox<Lesson>();
+		cbLesson.setBounds(94, 220, 257, 22);
+		tablePanel.add(cbLesson);
+		
+		cbSkier = new JComboBox<Skier>();
+		for(int i=0;i<skiers.size();i++) {
+			cbSkier.addItem(skiers.get(i));
+		}
+		cbSkier.setBounds(94, 191, 257, 22);
+		tablePanel.add(cbSkier);
+		
+		btnCreate = new JButton("Créer");
 		btnCreate.setBounds(10, 335, 89, 23);
 		tablePanel.add(btnCreate);
 		
@@ -201,5 +196,22 @@ public class BookingsJFrame extends JFrame {
 		JLabel lblInsurance = new JLabel("Assurance");
 		lblInsurance.setBounds(10, 159, 78, 13);
 		tablePanel.add(lblInsurance);
+		
+		Index.createHomeButton(tablePanel);
+	}
+	
+	public BookingsJFrame() {
+		bookings = Booking.getAllBookings(bookingDAO);
+		lessons = Lesson.getAllLessons(lessonDAO);
+		skiers = Skier.getAllSkiers(skierDAO);
+		periods = Period.getAllPeriods(periodDAO);
+		
+		initializeComponents();
+		
+		handleCbLesson();
+		
+		handleCbSkier();
+		
+		handleCreateButton();
 	}
 }

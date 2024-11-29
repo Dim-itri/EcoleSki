@@ -42,7 +42,19 @@ public class InstructorsJFrame extends JFrame {
 	private List<Accreditation> selectedAccreditations;
 	private int selectedRow;
 	private Instructor selectedInstructor;
-
+	JPanel tablePanel;
+	InstructorTableModel model;
+	JTable table;
+	JScrollPane scrollPane;
+	JButton btnCreation;
+	JComboBox<Accreditation> accredCB;
+	JButton btnAddAccred;
+	List<Accreditation> accreditations;
+	JButton btnDeleteAccred;
+	JButton btnDeletion;
+	JButton btnUpdate;
+	List<Instructor> instructors;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -68,40 +80,8 @@ public class InstructorsJFrame extends JFrame {
 		selectedRow = -1;
 		selectedInstructor = null;
 	}
-	/**
-	 * Create the frame.
-	 */
-	public InstructorsJFrame() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1299, 763);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setTitle("Instructeurs");
-
-		setContentPane(contentPane);
-		
-		JPanel tablePanel = new JPanel();
-		tablePanel.setBounds(5, 5, 1293, 735);
-		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-		
-		List<Instructor> instructors = Instructor.getAllInstructors(instructorDAO);
-
-		InstructorTableModel model = new InstructorTableModel(instructors);
-		contentPane.setLayout(null);
-		tablePanel.setLayout(null);
-
-		JTable table = new JTable(model);
-
-		table.getColumnModel().getColumn(5).setPreferredWidth(200);
-		
-		JScrollPane scrollPane = new JScrollPane(table);
-
-		scrollPane.setBounds(821, 20, 452, 699);
-
-		tablePanel.add(scrollPane);
-		contentPane.add(tablePanel);
-		
-		//Handling Click
+	
+	public void handleClick() {
 		table.getSelectionModel().addListSelectionListener(event -> {
 			if(!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
 				selectedRow = table.getSelectedRow();
@@ -114,17 +94,148 @@ public class InstructorsJFrame extends JFrame {
 				dobChooser.setDate(Date.from(selectedInstructor.getDateOfBirth().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 			}
 		});
-		
-		JButton btnHome = new JButton("Accueil");
-		btnHome.addActionListener(new ActionListener() {
+	}
+
+	public void handleCreateButton() {
+		btnCreation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Index index = new Index();
-				dispose();
-				index.setVisible(true);
+				try {
+					String instructorName = tfName.getText();
+					String instructorSurname = tfSurname.getText();
+					LocalDate dobInstructor = dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					int instructorPhone = Integer.parseInt(tfPhone.getText());
+					Instructor newInstructor = new Instructor(instructorName, instructorSurname
+							, dobInstructor, instructorPhone, selectedAccreditations.get(0));
+					
+					for(int i = 1;i<selectedAccreditations.size();i++) {
+						newInstructor.addAccreditation(selectedAccreditations.get(i));
+					}
+					
+					if(newInstructor.createInstructor(instructorDAO)) {
+						model.addInstructor(newInstructor);
+						JOptionPane.showMessageDialog(null, "Instructeur créé");
+					}
+				}catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Numéro de téléphone incorrect.");
+				}catch (IllegalArgumentException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (NullPointerException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
 			}
 		});
-		btnHome.setBounds(10, 696, 89, 23);
-		tablePanel.add(btnHome);
+	}
+	
+	public void handleDeleteButton() {
+		btnDeletion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(selectedInstructor.deleteInstructor(instructorDAO)) {
+						model.deleteInstructor(selectedRow);
+						resetFields();
+						JOptionPane.showMessageDialog(null, "Instructeur supprimé avec succès !");
+					}
+				}catch (NullPointerException ex) {
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un instructeur.");
+				}catch (IndexOutOfBoundsException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+	}
+	
+	public void handleUpdateButton() {
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String instructorName = tfName.getText();
+					String instructorSurname = tfSurname.getText();
+					int instructorPhone = Integer.parseInt(tfPhone.getText());
+					LocalDate instructorDob = dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					
+					selectedInstructor.setName(instructorName);
+					selectedInstructor.setSurname(instructorSurname);
+					selectedInstructor.setPhoneNumber(instructorPhone);
+					selectedInstructor.setDateOfBirth(instructorDob);
+					
+					List<Accreditation> accreditationscopy = new CopyOnWriteArrayList<Accreditation>(selectedAccreditations);
+					
+					selectedInstructor.getInstructorAccreditations().clear();
+					
+					for(Accreditation curr:accreditationscopy) {
+						selectedInstructor.addAccreditation(curr);
+					}
+					
+					if(selectedInstructor.updateInstructor(instructorDAO)) {
+						model.updateInstructor(selectedRow, selectedInstructor);
+						JOptionPane.showMessageDialog(null, "Instructeur modifié !");
+					}
+				}catch (NullPointerException ex) {
+					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un instructeur");
+				}catch (IndexOutOfBoundsException e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+			}
+		});
+	}
+	
+	public void handleAddAccred() {
+		btnAddAccred.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Accreditation selectedAccreditation = (Accreditation)accredCB.getSelectedItem();
+				if(selectedAccreditation != null && !selectedAccreditations.contains(selectedAccreditation)) {
+					selectedAccreditations.add(selectedAccreditation);
+					JOptionPane.showMessageDialog(null, "Accréditation ajoutée : " + selectedAccreditation);
+				}
+			}
+		});
+	}
+	
+	public void handleDeleteAccred() {
+		btnDeleteAccred.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Accreditation selectedAccreditation = (Accreditation)accredCB.getSelectedItem();
+				if(selectedAccreditation != null && selectedAccreditations.contains(selectedAccreditation)) {
+					selectedAccreditations.remove(selectedAccreditation);
+					JOptionPane.showMessageDialog(null, "Accréditation désélectionnée.");
+				}
+			}
+		});
+	}
+	
+	public void initializeComponents() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1299, 763);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setTitle("Instructeurs");
+
+		setContentPane(contentPane);
+		
+		tablePanel = new JPanel();
+		tablePanel.setBounds(5, 5, 1293, 735);
+		tablePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+		model = new InstructorTableModel(instructors);
+		contentPane.setLayout(null);
+		tablePanel.setLayout(null);
+
+		table = new JTable(model);
+
+		table.getColumnModel().getColumn(5).setPreferredWidth(200);
+		
+		scrollPane = new JScrollPane(table);
+
+		scrollPane.setBounds(821, 20, 452, 699);
+
+		tablePanel.add(scrollPane);
+		contentPane.add(tablePanel);
 		
 		JLabel lblName = new JLabel("Prénom");
 		lblName.setBounds(102, 133, 89, 29);
@@ -165,137 +276,53 @@ public class InstructorsJFrame extends JFrame {
 		dobChooser.setBounds(234, 213, 133, 29);
 		tablePanel.add(dobChooser);
 		
-		//Instructor Creation
-		JButton btnCreation = new JButton("Créer");
-		btnCreation.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					String instructorName = tfName.getText();
-					String instructorSurname = tfSurname.getText();
-					LocalDate dobInstructor = dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-					int instructorPhone = Integer.parseInt(tfPhone.getText());
-					Instructor newInstructor = new Instructor(instructorName, instructorSurname
-							, dobInstructor, instructorPhone, selectedAccreditations.get(0));
-					
-					for(int i = 1;i<selectedAccreditations.size();i++) {
-						newInstructor.addAccreditation(selectedAccreditations.get(i));
-					}
-					
-					if(newInstructor.createInstructor(instructorDAO)) {
-						model.addInstructor(newInstructor);
-						JOptionPane.showMessageDialog(null, "Instructeur créé");
-					}
-				}catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(null, "Numéro de téléphone incorrect.");
-				}catch (IllegalArgumentException e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
-				}catch (NullPointerException e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
-				}catch (Exception e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
-				}
-			}
-		});
+		btnCreation = new JButton("Créer");
 		btnCreation.setBounds(102, 529, 89, 23);
 		tablePanel.add(btnCreation);
 		
-		JComboBox<Accreditation> accredCB = new JComboBox<>();
-		//Fetching accreditations
-		List<Accreditation> accreditations = Accreditation.getAllAccreditations(accreditationDAO);
+		accredCB = new JComboBox<>();
 		for(Accreditation currAcc:accreditations) {
 			accredCB.addItem(currAcc);
 		}
 		accredCB.setBounds(234, 296, 129, 22);
 		tablePanel.add(accredCB);
 		
-		//Adding accreditations selected
-		selectedAccreditations = new ArrayList<Accreditation>();
-		JButton btnAddAccred = new JButton("Ajouter");
-		btnAddAccred.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Accreditation selectedAccreditation = (Accreditation)accredCB.getSelectedItem();
-				if(selectedAccreditation != null && !selectedAccreditations.contains(selectedAccreditation)) {
-					selectedAccreditations.add(selectedAccreditation);
-					JOptionPane.showMessageDialog(null, "Accréditation ajoutée : " + selectedAccreditation);
-				}
-			}
-		});
+		btnAddAccred = new JButton("Ajouter");
 		btnAddAccred.setBounds(373, 296, 89, 23);
 		tablePanel.add(btnAddAccred);
 		
-		//Removing accreditations selected
-		JButton btnDeleteAccred = new JButton("Supprimer");
-		btnDeleteAccred.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Accreditation selectedAccreditation = (Accreditation)accredCB.getSelectedItem();
-				if(selectedAccreditation != null && selectedAccreditations.contains(selectedAccreditation)) {
-					selectedAccreditations.remove(selectedAccreditation);
-					JOptionPane.showMessageDialog(null, "Accréditation désélectionnée.");
-				}
-			}
-		});
+		btnDeleteAccred = new JButton("Supprimer");
 		btnDeleteAccred.setBounds(472, 296, 89, 23);
 		tablePanel.add(btnDeleteAccred);
-
-		//Delete instructor
-		JButton btnDeletion = new JButton("Supprimer");
-		btnDeletion.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					if(selectedInstructor.deleteInstructor(instructorDAO)) {
-						model.deleteInstructor(selectedRow);
-						resetFields();
-						JOptionPane.showMessageDialog(null, "Instructeur supprimé avec succès !");
-					}
-				}catch (NullPointerException ex) {
-					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un instructeur.");
-				}catch (IndexOutOfBoundsException e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
-				}catch (Exception e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
-				}
-			}
-		});
+		
+		btnDeletion = new JButton("Supprimer");
 		btnDeletion.setBounds(201, 529, 89, 23);
 		tablePanel.add(btnDeletion);
-	
-		//Updating instructor
-		JButton btnUpdate = new JButton("Modifier");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					String instructorName = tfName.getText();
-					String instructorSurname = tfSurname.getText();
-					int instructorPhone = Integer.parseInt(tfPhone.getText());
-					LocalDate instructorDob = dobChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-					
-					selectedInstructor.setName(instructorName);
-					selectedInstructor.setSurname(instructorSurname);
-					selectedInstructor.setPhoneNumber(instructorPhone);
-					selectedInstructor.setDateOfBirth(instructorDob);
-					
-					List<Accreditation> accreditationscopy = new CopyOnWriteArrayList<Accreditation>(selectedAccreditations);
-					
-					selectedInstructor.getInstructorAccreditations().clear();
-					
-					for(Accreditation curr:accreditationscopy) {
-						selectedInstructor.addAccreditation(curr);
-					}
-					
-					if(selectedInstructor.updateInstructor(instructorDAO)) {
-						model.updateInstructor(selectedRow, selectedInstructor);
-						JOptionPane.showMessageDialog(null, "Instructeur modifié !");
-					}
-				}catch (NullPointerException ex) {
-					JOptionPane.showMessageDialog(null, "Veuillez sélectionner un instructeur");
-				}catch (IndexOutOfBoundsException e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
-				}catch (Exception e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage());
-				}
-			}
-		});
+		
+		btnUpdate = new JButton("Modifier");
 		btnUpdate.setBounds(300, 529, 89, 23);
 		tablePanel.add(btnUpdate);
+		
+		Index.createHomeButton(tablePanel);
+	}
+	
+	public InstructorsJFrame() {
+		accreditations = Accreditation.getAllAccreditations(accreditationDAO);
+		instructors = Instructor.getAllInstructors(instructorDAO);
+		selectedAccreditations = new ArrayList<Accreditation>();
+		
+		initializeComponents();
+		
+		handleClick();
+		
+		handleCreateButton();
+		
+		handleAddAccred();
+		
+		handleDeleteAccred();
+	
+		handleDeleteButton();
+		
+		handleUpdateButton();
 	}
 }
