@@ -144,8 +144,10 @@ public class BookingsJFrame extends JFrame {
 					}else {
 						JOptionPane.showMessageDialog(null, "Réservation en dehors des délais");
 					}
-				}catch (Exception ex) {
+				}catch (NullPointerException ex) {
 					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, e2.getMessage());
 				}
 				
 			}
