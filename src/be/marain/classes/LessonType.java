@@ -11,7 +11,7 @@ public class LessonType {
 	private Accreditation accreditation;
 	private int minAge;
 	private int maxAge;
-	
+
 	public static List<LessonType> getAllLessonTypes(LessonTypeDAO dao){
 		return dao.findAll();
 	}

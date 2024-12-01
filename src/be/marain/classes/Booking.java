@@ -49,7 +49,7 @@ public class Booking {
 		return price;
 	}
 	
-	public boolean isReduced() {
+	private boolean isReduced() {
 	    boolean hasMorningLesson = false;
 	    boolean hasAfternoonLesson = false;
 	    
