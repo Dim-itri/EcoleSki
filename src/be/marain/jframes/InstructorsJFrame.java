@@ -113,6 +113,7 @@ public class InstructorsJFrame extends JFrame {
 					
 					if(newInstructor.createInstructor(instructorDAO)) {
 						model.addInstructor(newInstructor);
+						resetFields();
 						JOptionPane.showMessageDialog(null, "Instructeur créé");
 					}
 				}catch (NumberFormatException ex) {
