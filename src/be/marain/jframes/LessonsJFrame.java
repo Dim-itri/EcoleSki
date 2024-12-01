@@ -91,6 +91,7 @@ public class LessonsJFrame extends JFrame {
 		selectedInstructor = null;
 		selectedLesson = null;
 		selectedLessonType = null;
+		cbInstructor.removeAllItems();
 		rdbtnAfternoon.setSelected(false);
 		rdbtnMorning.setSelected(false);
 	}
@@ -234,6 +235,7 @@ public class LessonsJFrame extends JFrame {
 					if(newLesson.canBeCreated()) {
 						if(newLesson.addLesson(lessonDAO)) {
 							model.addLesson(newLesson);
+							resetFields();
 							JOptionPane.showMessageDialog(null, "Leçon créée !");
 						}
 					}else {
