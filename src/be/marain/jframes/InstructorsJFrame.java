@@ -120,7 +120,6 @@ public class InstructorsJFrame extends JFrame {
 				}catch (IllegalArgumentException e2) {
 					JOptionPane.showMessageDialog(null, e2.getMessage());
 				}catch (NullPointerException e2) {
-					System.out.println("ici");
 					JOptionPane.showMessageDialog(null, e2.getMessage());
 				}catch (Exception e2) {
 					JOptionPane.showMessageDialog(null, e2.getMessage());

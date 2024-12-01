@@ -186,8 +186,7 @@ public class LessonsJFrame extends JFrame {
 					cbInstructor.removeAllItems();
 					
 					for(Instructor curr:instructors) {
-							if(curr.isAccreditate(selectedLessonType)
-									&& curr.isInstructorAvailable(date, lessons, startHour, endHour)) {
+							if(curr.isAccreditate(selectedLessonType) && curr.isInstructorAvailable(date, lessons, startHour, endHour)) {
 								cbInstructor.addItem(curr);
 							}
 					}

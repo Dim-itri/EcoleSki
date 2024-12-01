@@ -93,8 +93,6 @@ public class LessonDAO extends DAO<Lesson> {
 					+ "endHour = ?, isIndividual = ?, duration = ? "
 					+ "WHERE lessonid = ?";
 			
-			System.out.println(updatedLesson.getStartHour());
-			
 			PreparedStatement statement = connect.prepareStatement(query);
 			statement.setInt(1, updatedLesson.getMinBookings());
 			statement.setInt(2, updatedLesson.getMaxBookings());

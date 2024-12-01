@@ -123,7 +123,8 @@ public class BookingsJFrame extends JFrame {
 					Period period = null;
 					
 					for(Period currPeriod:periods) {
-						if (selectedLesson.getDate().isAfter(currPeriod.getStartDate()) && selectedLesson.getDate().isBefore(currPeriod.getEndDate())) {
+						if (selectedLesson.getDate().isAfter(currPeriod.getStartDate()) || selectedLesson.getDate().equals(currPeriod.getStartDate())
+								&& selectedLesson.getDate().isBefore(currPeriod.getEndDate()) || selectedLesson.getDate().equals(currPeriod.getEndDate())) {
 							period = currPeriod;
 						}
 					}
