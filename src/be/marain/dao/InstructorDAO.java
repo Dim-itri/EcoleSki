@@ -165,8 +165,9 @@ public class InstructorDAO extends DAO<Instructor> {
 				}
 				
 				instructors.add(currInst);
-				res.close();
 			}
+			
+			res.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
