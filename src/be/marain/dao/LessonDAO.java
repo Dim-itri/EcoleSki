@@ -194,12 +194,12 @@ public class LessonDAO extends DAO<Lesson> {
                 	skier.addBooking(currBook);
                 }
                 
-                statement.close();
-                resultSet.close();
-                substmt.close();
-                subRes.close();
+                
                 lessons.add(lesson);
             }
+            
+            statement.close();
+            resultSet.close();
         }catch (SQLException e) {
 			e.printStackTrace();
 		}
