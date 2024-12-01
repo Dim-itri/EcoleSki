@@ -45,6 +45,8 @@ public class InstructorDAO extends DAO<Instructor> {
 					int generatedId = generatedKeys.getInt(1);
 					newInstructor.setPersonId(generatedId);
 				}
+				
+				generatedKeys.close();
 			}
 			
 			//Creating the link accreditation-Instructor in DB
@@ -161,8 +163,9 @@ public class InstructorDAO extends DAO<Instructor> {
 						currInst.addAccreditation(curr);
 					}
 				}
-			
+				
 				instructors.add(currInst);
+				res.close();
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();

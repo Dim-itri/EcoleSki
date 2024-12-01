@@ -54,6 +54,8 @@ public class LessonDAO extends DAO<Lesson> {
 					int generatedId = generatedKeys.getInt(1);
 					lesson.setLessonId(generatedId);
 				}
+				
+				generatedKeys.close();
 			}
 			statement.close();
 		}catch (Exception e) {
@@ -191,7 +193,11 @@ public class LessonDAO extends DAO<Lesson> {
                 	lesson.addBooking(currBook);
                 	skier.addBooking(currBook);
                 }
-
+                
+                statement.close();
+                resultSet.close();
+                substmt.close();
+                subRes.close();
                 lessons.add(lesson);
             }
         }catch (SQLException e) {

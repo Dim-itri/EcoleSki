@@ -71,6 +71,7 @@ public class BookingDAO extends DAO<Booking> {
 			statement.setInt(1, booking.getBookingId());
 			
 			success = statement.executeUpdate() > 0;
+			statement.close();
 		} catch (SQLException e) {
 			success = false;
 			e.printStackTrace();
@@ -157,6 +158,8 @@ public class BookingDAO extends DAO<Booking> {
                 currSkier.addBooking(currBooking);
                 
                 bookings.add(currBooking);
+                
+                res.close();
 			}
 		}catch (Exception e) {
 			e.printStackTrace();

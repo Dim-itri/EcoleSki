@@ -51,6 +51,8 @@ public class PeriodDAO extends DAO<Period>{
 				
 				periods.add(period);
 			}
+			
+			res.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}

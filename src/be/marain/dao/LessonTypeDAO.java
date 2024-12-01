@@ -56,6 +56,8 @@ public class LessonTypeDAO extends DAO<LessonType> {
 				
 				lessonTypes.add(newLessonType);
 			}
+			
+			resultSet.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}

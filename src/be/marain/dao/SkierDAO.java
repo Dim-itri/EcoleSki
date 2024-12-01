@@ -1,5 +1,6 @@
 package be.marain.dao;
 
+import java.awt.Taskbar.State;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -160,6 +161,7 @@ public class SkierDAO extends DAO<Skier> {
 				
 				skiers.add(currSkier);
 			}
+			
 			
 			resultSet.close();
 		} catch (SQLException e) {
