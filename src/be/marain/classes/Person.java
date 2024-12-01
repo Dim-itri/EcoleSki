@@ -38,7 +38,7 @@ public abstract class Person {
 	}
 
 	public void setDateOfBirth(LocalDate dateOfBirth) throws IllegalArgumentException{
-		if(Pattern.matches(dobRegEx, dateOfBirth.toString())) {
+		if(Pattern.matches(dobRegEx, dateOfBirth.toString()) && dateOfBirth.isBefore(LocalDate.now())) {
 			this.dateOfBirth = dateOfBirth;
 		}else {
 			throw new IllegalArgumentException("Erreur dans la date de naissance : " + dateOfBirth.toString());
