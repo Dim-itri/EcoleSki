@@ -159,8 +159,9 @@ public class BookingDAO extends DAO<Booking> {
                 
                 bookings.add(currBooking);
                 
-                res.close();
 			}
+			
+			res.close();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
